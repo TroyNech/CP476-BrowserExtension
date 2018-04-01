@@ -1,0 +1,16 @@
+Course information
+    saveCourse: save course info into database
+    
+    displayCourses: display course from database
+    
+    
+vsb to loris
+    copyCRN: scrapes crn from vsb and saves CRN into database
+    
+    pasteCRN: navigates to loris and pastes into database
+
+favourites
+    fav: redirects to new tab of the schedule, clicks favourite, refreshes to new tab, clicks favourite, and display info in the end
+
+
+login portal
