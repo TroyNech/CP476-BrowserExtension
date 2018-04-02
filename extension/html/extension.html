@@ -50,6 +50,21 @@
         .prefix {
             padding-right: 15px;
         }
+
+        #registration-submit {
+            margin-left: 30px;
+        }
+
+        .error {
+            border: 1px solid #ad4641;
+            background: #f49c97;
+            color: #ad4641;
+            width: 100%;
+            margin: 0px;
+            padding: 10px;
+            padding-left: 20px;
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -63,18 +78,57 @@
                 </div>
             </div>
             <div class="collapsible-body">
+                <p class="error">Invalid login</p>
                 <form id="login-form">
                     <div class="input-field">
                         <i class="fas fa-envelope fa-xs prefix"></i>
                         <label for="email">Email</label>
-                        <input id="email" type="text">
+                        <input id="email" class="validate" type="email" required>
+                        <span class="helper-text" data-error="Email invalid"></span>
                     </div>
                     <div class="input-field">
                         <i class="fas fa-lock fa-xs prefix"></i>
                         <label for="password">Password</label>
-                        <input id="password" type="text">
+                        <input id="password" type="password" required>
                     </div>
+                    <a id="forgot-password" href="">Forgot Password</a>
+                    <div class="input-field" id="confirm-password-wrapper">
+                        <i class="fas fa-lock fa-xs prefix"></i>
+                        <label for="confirm-password">Confirm Password</label>
+                        <input id="confirm-password" type="password">
+                        <span class="helper-text" data-error="Passwords do not match"></span>
+                    </div>
+                    <button class="btn" id="login-submit" type="submit">Login</button>
+                    <button class="btn" id="registration-submit" type="submit">Registration</button>
                 </form>
+
+                <i class="fas fa-check-circle fa-10x" id="login-successful-check" style="color:green;"></i>
+
+                <div id="registration-msg" class="modal">
+                    <div class="modal-content">
+                        <h4>Thanks for registering!</h4>
+                    </div>
+                </div>
+
+                <div id="change-password" class="modal">
+                    <div class="modal-content">
+                        <h4>Change Password</h4>
+                        <form id="change-password-form">
+                            <div class="input-field">
+                                <i class="fas fa-lock fa-xs prefix"></i>
+                                <label for="new-password">New Password</label>
+                                <input id="new-password" type="password" required>
+                            </div>
+                            <div class="input-field" id="confirm-password-wrapper">
+                                <i class="fas fa-lock fa-xs prefix"></i>
+                                <label for="confirm-new-password">Confirm Password</label>
+                                <input id="confirm-new-password" type="password">
+                                <span class="helper-text" data-error="Passwords do not match"></span>
+                            </div>
+                            <button class="btn" id="change-password-submit" type="submit">Change Password</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </li>
         <li id="add-course-tab">
@@ -154,13 +208,31 @@
         var instance = M.Collapsible.init(elem, null);
     </script>
 
-    <!--
-    Toggle accordian icons. Look for .svg since fa js inserts svg into i
-    
-    -->
+    <!--Trigger modal-->
+    <script>
+        var elem = document.querySelector('.modal');
+        var instance = M.Modal.init(elem, null);
+
+        $('#modal1-trigger').click(function () {
+            instance.open();
+            setTimeout(function () {
+                instance.close();
+            }, 1000)
+        })
+
+    </script>
+
+    <!--Toggle accordian icons. Look for .svg since fa js inserts svg into i-->
     <script>
         $('#action-accordion .collapsible-header').click(function () {
             $(this).find('svg').toggleClass('fa-caret-right fa-caret-down');
+        })
+    </script>
+
+    <!--Handle click on forgot-password a-->
+    <script>
+        $('#forgot-password').click(function (event) {
+            event.preventDefault();
         })
     </script>
 </body>
