@@ -24,6 +24,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <style>
+        .btn {
+            text-transform: initial;
+        }
+
         #action-accordion {
             margin-top: 0;
         }
@@ -86,21 +90,48 @@
             margin-bottom: 2.5rem;
         }
 
-        #saved-courses-tab .collection .collection-item {
-            padding: 0;
+        #saved-courses-tab .collapsible-body {
+            padding: 0 0 2rem;
         }
 
-        /*
-         * Make button look like collection-item, just with cursor
-         * Using button b/c more semantic than li[collection-item]       
-        */
+        #saved-courses-tab .collection .collection-item {
+            display: flex;
+            -webkit-transition: .25s;
+            transition: .25s;
+            color: #26a69a;
+        }
+
+        #saved-courses-tab .collection .collection-item:hover {
+            background-color: #ddd;
+        }
 
         .saved-course-a {
-            /*  float:left;*/
+            flex-grow: 1;
+            margin: -10px 0;
         }
 
         .saved-course-remove {
-            /*  float: right;*/
+            align-self: flex-end;
+            padding-left: 5px;
+        }
+
+        #saved-courses-tab .card-panel {
+            margin: 0 0 1rem;
+        }
+
+        #open-courses,
+        #remove-courses {
+            display: block;
+            margin: auto;
+            margin-bottom: 10px;
+        }
+
+        #open-courses {
+            margin-top: 2rem;
+        }
+
+        .negative-btn {
+            background-color: #ef5350;
         }
     </style>
 </head>
@@ -217,20 +248,35 @@
                 </div>
             </div>
             <div class="collapsible-body">
-                <ul class="collection" id="saved-courses-collection">
-                    <li style="display:flex" class="collection-item">
-                        <a style="flex-grow:1" class="saved-course-a">Alvin</a>
-                        <a style="align-self:flex-end" href="" class="saved-course-remove">
-                            <i class="fas fa-times-circle" style="color:red"></i>
-                        </a>
-                    </li>
-                    <li style="display:flex" class="collection-item">
-                        <a style="flex-grow:1" class="saved-course-a">Alvin</a>
-                        <a style="align-self:flex-end" href="" class="saved-course-remove">
-                            <i class="fas fa-times-circle" style="color:red"></i>
-                        </a>
-                    </li>
-                </ul>
+                <div class="card-panel">
+                    <ul class="collection" id="saved-courses-collection">
+                        <li class="collection-item">
+                            <a class="saved-course-a valign-wrapper" href="">
+                                <span>Alvin</span>
+                            </a>
+                            <a class="saved-course-remove" href="">
+                                <i class="fas fa-times-circle" style="color:red"></i>
+                            </a>
+                        </li>
+                        <li class="collection-item">
+                            <a class="saved-course-a valign-wrapper" href="">
+                                <span>Alvin</span>
+                            </a>
+                            <a class="saved-course-remove" href="">
+                                <i class="fas fa-times-circle" style="color:red"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="btn" id="open-courses">Open All Courses</button>
+                <button class="btn-small negative-btn" id="remove-courses">Remove All Courses</button>
+            </div>
+            <div id="confirm-remove-courses-modal" class="modal">
+                <div class="modal-content">
+                    <p>Remove all courses?</p>
+                    <button class="btn negative-btn" id="confirm-remove-courses-btn" type="button">Confirm</button>
+                    <button class="btn" id="cancel-remove-courses-btn" type="button">Cancel</button>
+                </div>
             </div>
         </li>
         <li id="create-schedule-tab">
@@ -302,7 +348,6 @@
                 instance.close();
             }, 1000)
         })
-
     </script>
 
     <!--Toggle accordian icons. Look for .svg since fa js inserts svg into i-->
