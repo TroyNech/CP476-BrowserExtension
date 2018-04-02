@@ -1,8 +1,3 @@
-var i = 0;
-alert(i);
-i++;
-alert(i);
-
 /*
 function fav() {
     var crn;
