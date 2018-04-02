@@ -61,10 +61,20 @@
             margin-left: 30px;
         }
 
-        .error {
+        .success-msg {
+            border: 1px solid #7dbf4a;
+            background: #dbffc9;
+            color: #7dbf4a;
+        }
+
+        .error-msg {
             border: 1px solid #ad4641;
             background: #f49c97;
             color: #ad4641;
+        }
+
+        .success-msg,
+        .error-msg {
             width: 100%;
             margin: 0px;
             padding: 10px;
@@ -74,6 +84,23 @@
 
         #add-course-form div:first-of-type {
             margin-bottom: 2.5rem;
+        }
+
+        #saved-courses-tab .collection .collection-item {
+            padding: 0;
+        }
+
+        /*
+         * Make button look like collection-item, just with cursor
+         * Using button b/c more semantic than li[collection-item]       
+        */
+
+        .saved-course-a {
+            /*  float:left;*/
+        }
+
+        .saved-course-remove {
+            /*  float: right;*/
         }
     </style>
 </head>
@@ -90,7 +117,7 @@
             <div class="collapsible-body">
                 <!--Decide later which invalid login is better-->
                 <p class="invalid" style="color:red">Invalid login</p>
-                <p class="error">Invalid login</p>
+                <div class="error-msg">Invalid login</div>
                 <form id="login-form">
                     <div class="input-field">
                         <i class="fas fa-envelope fa-xs prefix"></i>
@@ -171,13 +198,15 @@
                     </div>
                     <div class="input-field">
                         <label for="add-course-code">Course Code</label>
-                        <input id="add-course-code" type="text" required>
+                        <input id="add-course-code" type="text" placeholder="CP 476" required>
                         <span class="helper-text" data-error="Course code invalid. Is the correct term selected?"></span>
                     </div>
                     <div class="input-field">
                         <button class="btn" id="add-course-submit" type="submit">Add</button>
                     </div>
                 </form>
+
+                <div class="success-msg">Course added</div>
             </div>
         </li>
         <li id="saved-courses-tab">
@@ -188,7 +217,20 @@
                 </div>
             </div>
             <div class="collapsible-body">
-                <span>Lorem ipsum dolor sit amet.</span>
+                <ul class="collection" id="saved-courses-collection">
+                    <li style="display:flex" class="collection-item">
+                        <a style="flex-grow:1" class="saved-course-a">Alvin</a>
+                        <a style="align-self:flex-end" href="" class="saved-course-remove">
+                            <i class="fas fa-times-circle" style="color:red"></i>
+                        </a>
+                    </li>
+                    <li style="display:flex" class="collection-item">
+                        <a style="flex-grow:1" class="saved-course-a">Alvin</a>
+                        <a style="align-self:flex-end" href="" class="saved-course-remove">
+                            <i class="fas fa-times-circle" style="color:red"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </li>
         <li id="create-schedule-tab">
