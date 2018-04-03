@@ -24,6 +24,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <style>
+        body {
+            font-size: 12px;
+            min-width: 25em;
+        }
+
+        .collapsible-header:focus, .modal:focus {
+            outline: none !important;
+        }
+
         .btn {
             text-transform: initial;
         }
@@ -55,10 +64,6 @@
         .fa-question-circle {
             color: #1976d2;
             margin-left: 10px;
-        }
-
-        .prefix {
-            padding-right: 15px;
         }
 
         #registration-submit {
@@ -117,6 +122,7 @@
 
         #saved-courses-tab .card-panel {
             margin: 0 0 1rem;
+            padding: 0;
         }
 
         #open-courses,
@@ -158,6 +164,14 @@
             width: 100%;
             height: 100%;
         }
+
+        .select-wrapper input.select-dropdown {
+            font-size: 1em;
+        }
+
+        input, label, button, a {
+            font-size: 1em !important;
+        }
     </style>
 </head>
 
@@ -172,8 +186,8 @@
             </div>
             <div class="collapsible-body">
                 <!--Decide later which invalid login is better-->
-                <p class="invalid" style="color:red">Invalid login</p>
-                <div class="error-msg">Invalid login</div>
+                <p class="invalid hide" style="color:red">Invalid login</p>
+                <div class="error-msg hide">Invalid login</div>
                 <form id="login-form">
                     <div class="input-field">
                         <i class="fas fa-envelope fa-xs prefix"></i>
@@ -184,18 +198,18 @@
                     <div class="input-field">
                         <i class="fas fa-lock fa-xs prefix"></i>
                         <label for="login-password">Password</label>
-                        <input id="login-password" type="password" required>
+                        <input id="login-password" class="validate" type="password" required>
                     </div>
                     <a id="forgot-password" href="">Forgot Password</a>
-                    <div class="input-field" id="confirm-password-wrapper">
+                    <div class="input-field hide" id="confirm-password-wrapper">
                         <i class="fas fa-lock fa-xs prefix"></i>
                         <label for="confirm-password">Confirm Password</label>
-                        <input id="confirm-password" type="password">
+                        <input id="confirm-password" class="validate" type="password">
                         <span class="helper-text" data-error="Passwords do not match"></span>
                     </div>
                     <div class="input-field">
-                        <button class="btn" id="login-submit" type="submit">Login</button>
-                        <button class="btn" id="registration-submit" type="submit">Registration</button>
+                        <button class="btn modal-btn-1" id="login-submit" type="submit">Login</button>
+                        <button class="btn modal-btn-2" id="registration-submit" type="submit">Registration</button>
                     </div>
                 </form>
 
@@ -237,7 +251,7 @@
                 </div>
             </div>
         </li>
-        <li id="logout-tab">
+        <li id="logout-tab" class="hide">
             <div class="collapsible-header">
                 <span>Logout</span>
             </div>
@@ -461,42 +475,6 @@
     <script src="js/jquery-3.3.1.js"></script>
     <script src="js/extensionControllers.js"></script>
 
-    <!--Initialize elements-->
-    <script>
-        var elem = document.querySelector('.collapsible');
-        var instance = M.Collapsible.init(elem, null);
-
-        var elem = document.querySelector('select');
-        var instance = M.FormSelect.init(elem, null);
-    </script>
-
-    <!--Trigger modal-->
-    <script>
-        var elem = document.querySelector('.modal');
-        var instance = M.Modal.init(elem, null);
-
-        $('#modal1-trigger').click(function () {
-            instance.open();
-            setTimeout(function () {
-                instance.close();
-            }, 1000)
-        })
-    </script>
-
-    <!--Toggle accordian icons. Look for .svg since fa js inserts svg into i-->
-    <script>
-        $('#action-accordion .collapsible-header').click(function () {
-            $(this).find('svg').toggleClass('fa-caret-right fa-caret-down');
-        })
-    </script>
-
-    <!--Handle click on forgot-password a-->
-    <script>
-        $('#forgot-password').click(function (event) {
-            event.preventDefault();
-        })
-    </script>
-
     <!--writing code for extensionControllers.js here to use VSCode's JQuery intellisene-->
     <script>
         //listeners for extension.html
@@ -519,7 +497,7 @@
                         post.done(function (data) {
                             if (data === "success") { */
             var modal = $('#login-success-modal');
-            //      modal.attr('display: hidden');
+            //      modal.attr('display: hide');
             var instance = M.Modal.init(modal, {
                 'inDuration': 1000,
                 'outDuration': 1000,
