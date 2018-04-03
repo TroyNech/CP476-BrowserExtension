@@ -13,7 +13,7 @@
 			"19": "images/icons/19.png",
 			"38": "images/icons/38.png"
 		},
-        "default_popup": "html/popup2.html"  
+        "default_popup": "html/extension.html"  
     },
 	
 	"icons": {

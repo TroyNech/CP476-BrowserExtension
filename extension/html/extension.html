@@ -145,6 +145,19 @@
             float: right;
             margin-right: 20px;
         }
+
+        #login-success-check {
+            color: green;
+        }
+
+        .modal {
+            background: transparent;
+            border: 0;
+            box-shadow: none !important;
+            -webkit-box-shadow: none !important;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -186,7 +199,14 @@
                     </div>
                 </form>
 
-                <i class="fas fa-check-circle fa-10x" id="login-successful-check" style="color:green;"></i>
+                <div id="login-success-modal" class="modal">
+                    <div class="modal-content" style="display:flex;justify-content:center;">
+                        <span class="fa-layers fw" style="position:inherit">
+                            <i class="fas fa-circle fa-10x" style="color:white"></i>
+                            <i class="fas fa-inverse fa-check-circle fa-10x" id="login-success-check"></i>
+                        </span>
+                    </div>
+                </div>
 
                 <div id="registration-msg" class="modal">
                     <div class="modal-content">
@@ -439,7 +459,7 @@
     -->
     <script src="js/materialize.js"></script>
     <script src="js/jquery-3.3.1.js"></script>
-    <script src="js/popup.js"></script>
+    <script src="js/extensionControllers.js"></script>
 
     <!--Initialize elements-->
     <script>
@@ -475,6 +495,48 @@
         $('#forgot-password').click(function (event) {
             event.preventDefault();
         })
+    </script>
+
+    <!--writing code for extensionControllers.js here to use VSCode's JQuery intellisene-->
+    <script>
+        //listeners for extension.html
+
+        var serverUrl = "https://laurierlink.herokuapp.com/";
+
+        //disable form submittion
+        $('form').submit(false);
+
+        //on login submit
+        //rely on browser to do front-end validation (back-end will do final validation)
+        //trigger fade-in fade-out success modal on good login
+        $('#login-submit').click(function (event) {
+            console.log("hi");
+
+            /*             var post = $.post(serverUrl + "login-controller", function () {});
+                        post.fail(function () {
+                            console.log("Login request to server failed");
+                        });
+                        post.done(function (data) {
+                            if (data === "success") { */
+            var modal = $('#login-success-modal');
+            //      modal.attr('display: hidden');
+            var instance = M.Modal.init(modal, {
+                'inDuration': 1000,
+                'outDuration': 1000,
+            });
+            instance = M.Modal.getInstance(modal);
+            instance.open()
+            modal.blur();
+
+            setTimeout(function () {
+                instance.close();
+            }, 1000);
+            //  }
+            // }) 
+
+
+
+        });
     </script>
 </body>
 
