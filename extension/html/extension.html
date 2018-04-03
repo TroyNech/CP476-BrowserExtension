@@ -105,12 +105,12 @@
             background-color: #ddd;
         }
 
-        .saved-course-a {
+        .saved-item {
             flex-grow: 1;
             margin: -10px 0;
         }
 
-        .saved-course-remove {
+        .saved-item-remove {
             align-self: flex-end;
             padding-left: 5px;
         }
@@ -120,18 +120,30 @@
         }
 
         #open-courses,
-        #remove-courses {
+        #remove-courses,
+        #open-schedules,
+        #remove-schedules {
             display: block;
             margin: auto;
             margin-bottom: 10px;
         }
 
-        #open-courses {
+        #open-courses,
+        #open-schedules {
             margin-top: 2rem;
         }
 
         .negative-btn {
             background-color: #ef5350;
+        }
+
+        .modal-btn-1 {
+            margin-left: 20px;
+        }
+
+        .modal-btn-2 {
+            float: right;
+            margin-right: 20px;
         }
     </style>
 </head>
@@ -152,14 +164,14 @@
                 <form id="login-form">
                     <div class="input-field">
                         <i class="fas fa-envelope fa-xs prefix"></i>
-                        <label for="email">Email</label>
-                        <input id="email" class="validate" type="email" required>
+                        <label for="login-email">Email</label>
+                        <input id="login-email" class="validate" type="email" required>
                         <span class="helper-text" data-error="Email invalid"></span>
                     </div>
                     <div class="input-field">
                         <i class="fas fa-lock fa-xs prefix"></i>
-                        <label for="password">Password</label>
-                        <input id="password" type="password" required>
+                        <label for="login-password">Password</label>
+                        <input id="login-password" type="password" required>
                     </div>
                     <a id="forgot-password" href="">Forgot Password</a>
                     <div class="input-field" id="confirm-password-wrapper">
@@ -251,26 +263,27 @@
                 <div class="card-panel">
                     <ul class="collection" id="saved-courses-collection">
                         <li class="collection-item">
-                            <a class="saved-course-a valign-wrapper" href="">
+                            <a class="saved-item valign-wrapper" href="">
                                 <span>Alvin</span>
                             </a>
-                            <a class="saved-course-remove" href="">
+                            <a class="saved-item-remove" href="">
                                 <i class="fas fa-times-circle" style="color:red"></i>
                             </a>
                         </li>
                         <li class="collection-item">
-                            <a class="saved-course-a valign-wrapper" href="">
+                            <a class="saved-item valign-wrapper" href="">
                                 <span>Alvin</span>
                             </a>
-                            <a class="saved-course-remove" href="">
+                            <a class="saved-item-remove" href="">
                                 <i class="fas fa-times-circle" style="color:red"></i>
                             </a>
                         </li>
                     </ul>
                 </div>
-                <button class="btn" id="open-courses">Open All Courses</button>
-                <button class="btn-small negative-btn" id="remove-courses">Remove All Courses</button>
+                <button class="btn modal-btn-1" id="open-courses">Open All Courses</button>
+                <button class="btn-small negative-btn modal-btn-2" id="remove-courses">Remove All Courses</button>
             </div>
+
             <div id="confirm-remove-courses-modal" class="modal">
                 <div class="modal-content">
                     <p>Remove all courses?</p>
@@ -294,7 +307,17 @@
                 </div>
             </div>
             <div class="collapsible-body">
-                <span>Lorem ipsum dolor sit amet.</span>
+                <form id="add-schedule-form">
+                    <div class="input-field">
+                        <label for="add-schedule-name">Name</label>
+                        <input id="add-schedule-name" type="text" required>
+                    </div>
+                    <div class="input-field">
+                        <button class="btn" id="add-schedule-submit" type="submit">Add</button>
+                    </div>
+                </form>
+
+                <div class="success-msg">Schedule added</div>
             </div>
         </li>
         <li id="saved-schedules-tab">
@@ -305,7 +328,36 @@
                 </div>
             </div>
             <div class="collapsible-body">
-                <span>Lorem ipsum dolor sit amet.</span>
+                <div class="card-panel">
+                    <ul class="collection" id="saved-courses-collection">
+                        <li class="collection-item">
+                            <a class="saved-item valign-wrapper" href="">
+                                <span>Alvin</span>
+                            </a>
+                            <a class="saved-item-remove" href="">
+                                <i class="fas fa-times-circle" style="color:red"></i>
+                            </a>
+                        </li>
+                        <li class="collection-item">
+                            <a class="saved-item valign-wrapper" href="">
+                                <span>Alvin</span>
+                            </a>
+                            <a class="saved-item-remove" href="">
+                                <i class="fas fa-times-circle" style="color:red"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <button class="btn saved" id="open-schedules">Open All Schedules</button>
+                <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button>
+            </div>
+
+            <div id="confirm-remove-schedules-modal" class="modal">
+                <div class="modal-content">
+                    <p>Remove all schedules?</p>
+                    <button class="btn negative-btn modal-btn-1" id="confirm-remove-schedules-btn" type="button">Confirm</button>
+                    <button class="btn modal-btn-1" id="cancel-remove-schedules-btn" type="button">Cancel</button>
+                </div>
             </div>
         </li>
         <li id="register-courses-tab">
@@ -314,9 +366,70 @@
                     <span>Register in Courses</span>
                 </div>
             </a>
+
+            <div id="loris-login-modal" class="modal">
+                <div class="modal-content">
+                    <!--Decide later which invalid login is better-->
+                    <p class="invalid" style="color:red">Invalid login</p>
+                    <div class="error-msg">Invalid login</div>
+                    <h4>Enter Login Information</h4>
+                    <p>
+                        Please enter your LORIS login information. Laurier-Links needs this information to open the registration page on LORIS. Your
+                        information will not be stored.
+                    </p>
+                    <form id="loris-login-form">
+                        <div class="input-field">
+                            <i class="fas fa-envelope fa-xs prefix"></i>
+                            <label for="loris-email">Email</label>
+                            <input id="loris-email" class="validate" type="email" required>
+                            <span class="helper-text" data-error="Email invalid"></span>
+                        </div>
+                        <div class="input-field">
+                            <i class="fas fa-lock fa-xs prefix"></i>
+                            <label for="loris-password">Password</label>
+                            <input id="loris-password" type="password" required>
+                        </div>
+
+                        <div class="input-field">
+                            <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
+                            <button class="btn negative-btn modal-btn-2" id="loris-login-cancel" type="button">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </li>
     </ul>
     <i class="fas fa-question-circle fa-2x"></i>
+
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <h4>Enter Login Information</h4>
+            <p>
+                Please enter your LORIS login information. Laurier-Links needs this information to open the registration page on LORIS. Your
+                information will not be stored.
+            </p>
+            <form id="loris-login-form">
+                <div class="input-field">
+                    <i class="fas fa-envelope fa-xs prefix"></i>
+                    <label for="loris-email">Email</label>
+                    <input id="loris-email" class="validate" type="email" required>
+                    <span class="helper-text" data-error="Email invalid"></span>
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-lock fa-xs prefix"></i>
+                    <label for="loris-password">Password</label>
+                    <input id="loris-password" type="password" required>
+                </div>
+
+                <div class="input-field">
+                    <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
+                    <button class="btn negative-btn modal-btn-2" id="loris-login-cancel" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!--JavaScript at end of body for optimized loading-->
     <!--Use local unminified for testing-->
