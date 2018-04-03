@@ -35,7 +35,7 @@ $('#login-submit').click(function (event) {
 		return;
 	}
 
-	/*             var post = $.post(serverUrl + "login-controller", function () {});
+	/*             var post = $.post(serverUrl + "login-controller", $('#login-form').serialize(), function () {});
 				post.fail(function () {
 					console.log("Login request to server failed");
 				});
@@ -90,7 +90,7 @@ $('#registration-submit').click(function (event) {
 
 	//else, passwords match
 	//send to server
-	var post = $.post(serverUrl + "registration-controller", function () {});
+	var post = $.post(serverUrl + "registration-controller", $('#login-form').serialize(), function () {});
 	post.fail(function () {
 		console.log("Registration request to server failed");
 	});
@@ -116,15 +116,63 @@ $('#registration-submit').click(function (event) {
 	});
 });
 
+//logout listener
+$('#logout-tab').click(function () {
+	//clear memory
+
+	alert('Logged out');
+
+	//close extension
+	window.close();
+});
+
+//add course listener
+$('#add-course-submit').click(function () {
+	//verify course code value
+	//mark invalid if nothing entered
+	if ($('#add-course-code').val().length === 0) {
+		$('#add-course-code').addClass('invalid');
+		return;
+	}
+
+	//else, submit form
+	//send to server
+	var post = $.post(serverUrl + "add-course-controller", $('#add-course-form').serialize(), function () {});
+	post.fail(function () {
+		console.log("Add course request to server failed");
+	});
+	post.done(function (data) {
+		if (data === "valid") {
+			var msg = $('#course-added-msg');
+			msg.removeClass('hide');
+			msg.hide();
+			msg.fadeIn(400, function () {
+				setTimeout(2000, function () {
+					msg.fadeOut('400', function () {
+						msg.addClass('hide');
+					});
+				});
+			});
+		} else if (data === "invalid") {
+			$('#add-course-code').addClass('invalid');
+			return;
+		} else {
+			console.log("Unexepected data from server");
+		}
+	});
+});
+
+
+
 function loggedIn() {
 	//write to memory that logged in
-	
+
 	//switch login tab to logout
-	$('#login-tab').fadeOut(400, function() {
+	$('#login-tab').fadeOut(400, function () {
 		$('#login-tab').addClass('hide');
 		$('#logout-tab').removeClass('hide');
 		$('#logout-tab').hide();
 		$('#logout-tab').fadeIn();
 	});
-	
+
 }
