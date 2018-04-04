@@ -12,23 +12,13 @@ var instance = M.FormSelect.init(elem, null);
 
 //read storage and setup extension
 chrome.storage.sync.get(storageKey, function (result) {
-	console.log('initial setup start');
-	console.log(result);
-	console.log(JSON.parse(result));
-	console.log('initial setup end');
-
 	if (jQuery.isEmptyObject(result)) {
 		return;
 	}
 
+	//else, logged in
 	userData = JSON.parse(result);
 
-	//if login key exists, then logged in
-	if (!('login' in userData)) {
-		return;
-	}
-
-	//else, logged in
 	loggedIn();
 });
 
@@ -39,7 +29,7 @@ chrome.tabs.query({
 	'currentWindow': true,
 	'url': 'https://scheduleme.wlu.ca/vsb/*'
 }, function (tabs) {
-	if (tabs != null) {
+	if (!($.isEmptyObject(tabs))) {
 		$('#add-schedule-tab').removeClass('collapse-disabled');
 		$('#register-courses-tab').removeClass('hide');
 	}
@@ -179,7 +169,45 @@ $('#add-course-submit').click(function () {
 
 	//else, submit form to server
 
-	var toSend = $('#add-course-form').serializeArray();
+	//get course data
+	var code = $('#add-course-code').val();
+	var term = $('#term').val();
+
+	//extract info from code
+	var depart = code.substr(0, 2).toUpperCase();
+	var numb = code.substr(2).trim();
+
+	//need to get year and month from term
+	var date = new Date();
+	var year;
+	var month;
+
+	if (term == "Winter") {
+		year = date.getFullYear() + 1;
+		month = 01;
+	} else if (term == "Fall") {
+		year = date.getFullYear();
+		month = 09;
+	}
+	//is Spring
+	else {
+		date.setDate(date.getMonth() + 1);
+		year = date.getFullYear();
+		month = 05;
+	}
+
+	var url = "https://loris.wlu.ca/ssb_prod/bwckctlg.p_disp_course_detail?cat_term_in=" + year.toString() + month.toString().padStart(2, '0') + "&subj_code_in=" + depart + "&crse_numb_in=" + numb;
+
+	var toSend = [];
+	var get = $.get(url);
+	get.done(function (response) {
+		var info = $(response).find('.nttitle')
+		toSend['title'] = info.get(0);
+		toSend['description'] = $(response).find('.ntdefault').get(0);
+	})
+
+	toSend['term'] = term;
+	toSend['add-course-code'] = depart + " " + numb;
 	toSend['login-email'] = userData['email'];
 
 	var post = $.post(serverUrl + "add-course-controller.php", JSON.stringify(toSend), function () {});
@@ -285,7 +313,7 @@ $('#remove-courses-btn').click(function () {
 
 //if click confirm remove all courses, remove all courses
 $('#confirm-remove-courses-btn').click(function () {
-	var post = $.post(serverUrl + "remove-course-controller.php", 'ALL', function () {});
+	var post = $.post(serverUrl + "remove-all-courses-controller.php", 'ALL', function () {});
 	post.fail(function () {
 		console.log("Remove all courses request to server failed");
 	});
@@ -308,7 +336,7 @@ $('#remove-schedules-btn').click(function () {
 
 //if click confirm remove all schedules, remove all schedules
 $('#confirm-remove-schedules-btn').click(function () {
-	var post = $.post(serverUrl + "remove-schedules-controller.php", 'ALL', function () {});
+	var post = $.post(serverUrl + "remove-all-schedules-controller.php", 'ALL', function () {});
 	post.fail(function () {
 		console.log("Remove all schedules request to server failed");
 	});
@@ -381,7 +409,7 @@ $('#saved-courses-tab .saved-item').click(function (event) {
 		var courseId = $(this).attr('id');
 
 		//if not on course detail page, open it
-		if (tabs == null) {
+		if ($.isEmptyObject(tabs)) {
 			chrome.tabs.update({
 				'url': "html/courseDetail.html"
 			}, function () {
@@ -448,7 +476,7 @@ $('#loris-login-submit').click(function () {
 					'url': 'https://loris.wlu.ca/ssb_prod/twbkwbis.P_ValLogin'
 				}, function (tabs) {
 					//if still on login, alert and return
-					if (tabs == null) {
+					if ($.isEmptyObject(tabs)) {
 						alert("Your login didn't work!");
 						return;
 					}
@@ -465,14 +493,32 @@ $('#loris-login-submit').click(function () {
 	});
 })
 
-$('#help-icon-wrapper').click(function() {
+$('#help-icon-wrapper').click(function () {
 	alert('Help!');
 })
 
 function logIn(email) {
-	//write to memory
-	//just need to create login key
+	//retrieve any items from database
+
+	var get = $.get(serverUrl + "get-courses-controller.php", email, function (results) {});
+	get.fail(function () {
+		console.log('Get courses request to server failed');
+	});
+	get.done(function () {
+		userData['courses'] = JSON.parse(response);
+	});
+
+	get = $.get(serverUrl + "get-schedules-controller.php", email, function (results) {});
+	get.fail(function () {
+		console.log('Get schedules request to server failed');
+	});
+	get.done(function () {
+		userData['schedules'] = JSON.parse(response);
+	});
+
 	userData['email'] = email;
+
+	//write to memory
 	chrome.storage.sync.set({
 		storageKey: userData
 	}, function () {});
@@ -481,14 +527,27 @@ function logIn(email) {
 	loggedIn();
 }
 
-//switch login tab to logout
 function loggedIn() {
-	//	$('.collapsible-header').
+	$('#login-tab').addClass('hide');
+	$('#logout-tab').removeClass('hide');
+	$('#logout-tab').hide();
+	$('#logout-tab').fadeIn();
 
+	changeNonLoginTabs();
+}
+
+//switch login tab to logout
+function loggedInTransition() {
 	$('#login-tab').fadeOut(400, function () {
 		$('#login-tab').addClass('hide');
 		$('#logout-tab').removeClass('hide');
 		$('#logout-tab').hide();
 		$('#logout-tab').fadeIn();
+
+		changeNonLoginTabs();
 	});
+}
+
+function changeNonLoginTabs() {
+	$('.disabled').removeClass('disabled');
 }

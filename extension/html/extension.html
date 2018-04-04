@@ -69,7 +69,7 @@
             background-color: #ddd;
         }
 
-        .disabled .collapsible-header {
+        .collapsible .disabled .collapsible-header {
             background-color: #eeeeee;
         }
 
@@ -310,7 +310,7 @@
                 <span>Logout</span>
             </div>
         </li>
-        <li id="add-course-tab">
+        <li id="add-course-tab" class="disabled">
             <div class="collapsible-header">
                 <span>Add Course</span>
                 <div class="tab-icon-wrapper">
@@ -340,7 +340,7 @@
                 <div id="course-added-msg" class="success-msg hide">Course added</div>
             </div>
         </li>
-        <li id="saved-courses-tab" class="saved-item-tab">
+        <li id="saved-courses-tab" class="saved-item-tab disabled">
             <div class="collapsible-header">
                 <span>Saved Courses</span>
                 <div class="tab-icon-wrapper">
@@ -353,7 +353,7 @@
                     </ul>
                 </div>
                 <!-- <button class="btn" id="open-courses">Open All Courses</button>-->
-                <button class="btn-small negative-btn" id="remove-courses">Remove All Courses</button>
+                <!-- <button class="btn-small negative-btn" id="remove-courses">Remove All Courses</button> -->
             </div>
 
             <div id="confirm-remove-courses-modal" class="modal">
@@ -364,7 +364,7 @@
                 </div>
             </div>
         </li>
-        <li id="add-schedule-tab" class="collapse-disabled">
+        <li id="add-schedule-tab" class="collapse-disabled disabled">
             <div class="collapsible-header">
                 <span>Add Schedule</span>
                 <div class="tab-icon-wrapper">
@@ -385,7 +385,7 @@
                 <div class="success-msg hide" id="schedule-added-msg">Schedule added</div>
             </div>
         </li>
-        <li id="saved-schedules-tab" class="saved-item-tab">
+        <li id="saved-schedules-tab" class="saved-item-tab disabled">
             <div class="collapsible-header">
                 <span>Saved Schedules</span>
                 <div class="tab-icon-wrapper">
@@ -397,7 +397,7 @@
                     <ul class="collection" id="saved-schedules-collection">
                     </ul>
                 </div>
-                <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button>
+              <!-- <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button> -->
             </div>
 
             <div id="confirm-remove-schedules-modal" class="modal">
@@ -427,7 +427,7 @@
                     </p>
                     <form id="loris-login-form">
                         <div class="input-field">
-                            <i class="fas fa-envelope fa-xs prefix"></i>
+                            <i class="fas fa-id-badge fa-xs prefix"></i>
                             <label for="loris-id">User ID</label>
                             <input id="loris-id" name="loris-id" class="validate" required>
                         </div>
@@ -439,46 +439,16 @@
 
                         <div class="input-field">
                             <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
-                            <button class="btn negative-btn modal-btn-2" id="loris-login-cancel" type="button">Cancel</button>
+                            <button class="btn negative-btn modal-btn-2 modal-close" id="loris-login-cancel" type="button">Cancel</button>
                         </div>
                     </form>
                 </div>
             </div>
-
         </li>
     </ul>
     <div id="help-icon-wrapper">
         <i id="help-icon" class="fas fa-question-circle fa-2x"></i>
     </div>
-
-    <div id="loris-login-modal" class="modal">
-        <div class="modal-content">
-            <h4>Enter Login Information</h4>
-            <p>
-                Please enter your LORIS login information. Laurier-Links needs this information to open the registration page on LORIS. Your
-                information will not be stored.
-            </p>
-            <form id="loris-login-form">
-                <div class="input-field">
-                    <i class="fas fa-envelope fa-xs prefix"></i>
-                    <label for="loris-id">Email</label>
-                    <input id="loris-id" name="loris-id" class="validate" type="email" required>
-                    <span class="helper-text" data-error="Email invalid"></span>
-                </div>
-                <div class="input-field">
-                    <i class="fas fa-lock fa-xs prefix"></i>
-                    <label for="loris-pin">Password</label>
-                    <input id="loris-pin" class="validate" name="loris-pin" type="password" required>
-                </div>
-
-                <div class="input-field">
-                    <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
-                    <button class="btn negative-btn modal-btn-2 modal-close" id="loris-login-cancel" type="button">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
 
     <!--JavaScript at end of body for optimized loading-->
     <!--Use local unminified for testing-->
