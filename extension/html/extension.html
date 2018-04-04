@@ -353,7 +353,7 @@
             </div>
         </li>
         <li id="create-schedule-tab">
-            <a class="no-link-colour" href="">
+            <a class="no-link-colour" href="#">
                 <div class="collapsible-header disabled">
                     <span>Create Schedule</span>
                 </div>
@@ -430,8 +430,8 @@
             <div id="loris-login-modal" class="modal">
                 <div class="modal-content">
                     <!--Decide later which invalid login is better-->
-                    <p class="invalid" style="color:red">Invalid login</p>
-                    <div class="error-msg">Invalid login</div>
+                    <p class="invalid hide" style="color:red">Invalid login</p>
+                    <div class="error-msg hide">Invalid login</div>
                     <h4>Enter Login Information</h4>
                     <p>
                         Please enter your LORIS login information. Laurier-Links needs this information to open the registration page on LORIS. Your
@@ -440,14 +440,13 @@
                     <form id="loris-login-form">
                         <div class="input-field">
                             <i class="fas fa-envelope fa-xs prefix"></i>
-                            <label for="loris-email">Email</label>
-                            <input id="loris-email" name="loris-email" class="validate" type="email" required>
-                            <span class="helper-text" data-error="Email invalid"></span>
+                            <label for="loris-id">User ID</label>
+                            <input id="loris-id" name="loris-id" class="validate" required>
                         </div>
                         <div class="input-field">
                             <i class="fas fa-lock fa-xs prefix"></i>
-                            <label for="loris-password">Password</label>
-                            <input id="loris-password" name="loris-password" type="password" required>
+                            <label for="loris-pin">Pin</label>
+                            <input id="loris-pin" name="loris-pin" class="validate" type="password" required>
                         </div>
 
                         <div class="input-field">
@@ -472,19 +471,19 @@
             <form id="loris-login-form">
                 <div class="input-field">
                     <i class="fas fa-envelope fa-xs prefix"></i>
-                    <label for="loris-email">Email</label>
-                    <input id="loris-email" name="loris-email" class="validate" type="email" required>
+                    <label for="loris-id">Email</label>
+                    <input id="loris-id" name="loris-id" class="validate" type="email" required>
                     <span class="helper-text" data-error="Email invalid"></span>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock fa-xs prefix"></i>
-                    <label for="loris-password">Password</label>
-                    <input id="loris-password" name="loris-password" type="password" required>
+                    <label for="loris-pin">Password</label>
+                    <input id="loris-pin" class="validate" name="loris-pin" type="password" required>
                 </div>
 
                 <div class="input-field">
                     <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
-                    <button class="btn negative-btn modal-btn-2" id="loris-login-cancel" type="button">Cancel</button>
+                    <button class="btn negative-btn modal-btn-2 modal-close" id="loris-login-cancel" type="button">Cancel</button>
                 </div>
             </form>
         </div>
@@ -500,48 +499,6 @@
     <script src="js/materialize.js"></script>
     <script src="js/jquery-3.3.1.js"></script>
     <script src="js/extensionControllers.js"></script>
-
-    <!--writing code for extensionControllers.js here to use VSCode's JQuery intellisene-->
-    <script>
-        //listeners for extension.html
-
-        var serverUrl = "https://laurierlink.herokuapp.com/";
-
-        //disable form submittion
-        $('form').submit(false);
-
-        //on login submit
-        //rely on browser to do front-end validation (back-end will do final validation)
-        //trigger fade-in fade-out success modal on good login
-        $('#login-submit').click(function (event) {
-            console.log("hi");
-
-            /*             var post = $.post(serverUrl + "login-controller", function () {});
-                        post.fail(function () {
-                            console.log("Login request to server failed");
-                        });
-                        post.done(function (data) {
-                            if (data === "success") { */
-            var modal = $('#login-success-modal');
-            //      modal.attr('display: hide');
-            var instance = M.Modal.init(modal, {
-                'inDuration': 1000,
-                'outDuration': 1000,
-            });
-            instance = M.Modal.getInstance(modal);
-            instance.open()
-            modal.blur();
-
-            setTimeout(function () {
-                instance.close();
-            }, 1000);
-            //  }
-            // }) 
-
-
-
-        });
-    </script>
 </body>
 
 </html>

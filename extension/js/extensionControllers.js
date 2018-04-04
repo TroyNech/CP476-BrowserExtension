@@ -58,7 +58,7 @@ $('#login-submit').click(function () {
 		return;
 	}
 
-	var post = $.post(serverUrl + "login-controller.php", $('#login-form').serialize(), function () { });
+	var post = $.post(serverUrl + "login-controller.php", $('#login-form').serialize(), function () {});
 	post.fail(function () {
 		console.log("Login request to server failed");
 	});
@@ -83,8 +83,7 @@ $('#login-submit').click(function () {
 			}, 1000);
 		} else if (data['result'] == false) {
 			alert("Your login is invalid!");
-		}
-		else {
+		} else {
 			console.log("Unexepected data from server");
 		}
 	});
@@ -113,7 +112,7 @@ $('#registration-submit').click(function () {
 
 	//else, passwords match
 	//send to server
-	var post = $.post(serverUrl + "registration-controller.php", $('#login-form').serialize(), function () { });
+	var post = $.post(serverUrl + "registration-controller.php", $('#login-form').serialize(), function () {});
 	post.fail(function () {
 		console.log("Registration request to server failed");
 	});
@@ -167,7 +166,7 @@ $('#add-course-submit').click(function () {
 	var toSend = $('#add-course-form').serializeArray();
 	toSend['login-email'] = userData['email'];
 
-	var post = $.post(serverUrl + "add-course-controller.php", JSON.stringify(toSend), function () { });
+	var post = $.post(serverUrl + "add-course-controller.php", JSON.stringify(toSend), function () {});
 	post.fail(function () {
 		console.log("Add course request to server failed");
 	});
@@ -196,7 +195,9 @@ $('#add-course-submit').click(function () {
 
 			//add to courses list and write back to storage
 			userData['courses'][course['id']] = course;
-			chrome.storage.sync.set({ storageKey: userData }, function () {
+			chrome.storage.sync.set({
+				storageKey: userData
+			}, function () {
 				console.log('Value is set to ' + userData);
 			});
 		} else {
@@ -218,7 +219,7 @@ $('#add-schedule-submit').click(function () {
 	var toSend = $('#add-schedule-form').serializeArray();
 	toSend['login-email'] = userData['email'];
 
-	var post = $.post(serverUrl + "add-schedule-controller.php", JSON.stringify(toSend), function () { });
+	var post = $.post(serverUrl + "add-schedule-controller.php", JSON.stringify(toSend), function () {});
 	post.fail(function () {
 		console.log("Add schedule request to server failed");
 	});
@@ -247,7 +248,9 @@ $('#add-schedule-submit').click(function () {
 
 			//add to schedules list and write back to storage
 			userData['schedules'][schedule['id']] = schedule;
-			chrome.storage.sync.set({ storageKey: userData }, function () {
+			chrome.storage.sync.set({
+				storageKey: userData
+			}, function () {
 				console.log('Value is set to ' + userData);
 			});
 		} else {
@@ -266,7 +269,7 @@ $('#remove-courses-btn').click(function () {
 
 //if click confirm remove all courses, remove all courses
 $('#confirm-remove-courses-btn').click(function () {
-	var post = $.post(serverUrl + "remove-course-controller.php", 'ALL', function () { });
+	var post = $.post(serverUrl + "remove-course-controller.php", 'ALL', function () {});
 	post.fail(function () {
 		console.log("Remove all courses request to server failed");
 	});
@@ -289,7 +292,7 @@ $('#remove-schedules-btn').click(function () {
 
 //if click confirm remove all schedules, remove all schedules
 $('#confirm-remove-schedules-btn').click(function () {
-	var post = $.post(serverUrl + "remove-schedules-controller.php", 'ALL', function () { });
+	var post = $.post(serverUrl + "remove-schedules-controller.php", 'ALL', function () {});
 	post.fail(function () {
 		console.log("Remove all schedules request to server failed");
 	});
@@ -314,7 +317,7 @@ $('.saved-item-remove').click(function (event) {
 	//if schedule collection, remove schedule
 	if (collection.attr('id') == "saved-schedules-collection") {
 		delete userData['schedules'][itemId];
-		var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () { });
+		var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () {});
 		post.fail(function () {
 			console.log('Remove schedule request to server failed');
 		});
@@ -322,7 +325,7 @@ $('.saved-item-remove').click(function (event) {
 	//else, course collection, remove course
 	else {
 		delete userData['courses'][itemId];
-		var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () { });
+		var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () {});
 		post.fail(function () {
 			console.log('Remove course request to server failed');
 		});
@@ -336,23 +339,124 @@ $('.saved-item-remove').click(function (event) {
 	}, 600);
 });
 
-//redirect page to vsb
-$('#create-schedule-tab').click(function() {
-	window.location.href = "https://scheduleme.wlu.ca/vsb/criteria.jsp?access=0&lang=en&tip=1&page=results&scratch=0&advice=0&term=0&sort=none&filters=iiiiiiiii&bbs=&ds=&cams=0_1_2_3_4_5_6_7_8_9_C_I_K_T_V_W_X_Z_A_B_D_G_R_J_P_S_M_O_Y_E_F_H_L_N_Q_SNP_CC_WEB&locs=any&isrts=";
+//redirect page to vsb on create schedule tab click
+$('#create-schedule-tab').click(function (event) {
+	event.preventDefault();
+	chrome.tabs.update({
+		'url': "https://scheduleme.wlu.ca/vsb/"
+	}, function () {
+		$(this).addClass('hide');
+		$('#add-schedule-tab').removeClass('disabled');
+		$('#register-courses-tab').removeClass('hide');
+	});
 });
-//redirect page to vsb
-$('.no-link-colour').click(function() {
-	window.location.href = "https://scheduleme.wlu.ca/vsb/criteria.jsp?access=0&lang=en&tip=1&page=results&scratch=0&advice=0&term=0&sort=none&filters=iiiiiiiii&bbs=&ds=&cams=0_1_2_3_4_5_6_7_8_9_C_I_K_T_V_W_X_Z_A_B_D_G_R_J_P_S_M_O_Y_E_F_H_L_N_Q_SNP_CC_WEB&locs=any&isrts=";
+
+//open new tab on saved course item click 
+$('#saved-courses-tab .saved-item').click(function (event) {
+	event.preventDefault();
+
+	//check whether course detail page is open in current page
+	chrome.tabs.query({
+		'active': true,
+		'currentWindow': true,
+		'url': 'file:///html/courseDetail.html'
+	}, function (tabs) {
+		var courseId = $(this).attr('id');
+
+		//if not on course detail page, open it
+		if (tabs == null) {
+			chrome.tabs.update({
+				'url': "html/courseDetail.html"
+			}, function () {
+				$('#create-schedule-tab').removeClass('hide');
+				$('#add-schedule-tab').addClass('disabled');
+				$('#register-courses-tab').addClass('hide');
+
+				//send msg to content script to modify page
+				chrome.tabs.sendMessage(tabs[0].id, userData['courses'][courseId], function (response) {});
+			});
+		} else {
+			//send msg to content script to modify page
+			chrome.tabs.sendMessage(tabs[0].id, userData['courses'][courseId], function (response) {});
+		}
+	});
 });
 
+//open schedule on saved schedule item click
+$('#saved-schedules-tab .saved-item').click(function (event) {
+	event.preventDefault();
 
+	var link = userData['schedules'][$(this).attr('id')]['link']
+	chrome.tabs.update({
+		'url': link
+	}, function () {
+		$('#create-schedule-tab').addClass('hide');
+		$('#add-schedule-tab').removeClass('disabled');
+		$('#register-courses-tab').removeClass('hide');
+	});
+});
 
+//open register modal on register on courses tab click
+$('register-courses-tab').click(function (event) {
+	event.preventDefault();
+
+	var modal = $('#loris-login-modal');
+	var instance = M.Modal.init(modal, {});
+	instance = M.Modal.getInstance(modal);
+	instance.open()
+});
+
+//validate input on loris login submit
+//and then open loris if valid
+$('#loris-login-submit').click(function () {
+	//check to make sure that the fields aren't blank
+	if ($('#loris-id').val().length === 0 || $('#loris-pin').val().length === 0) {
+		return;
+	}
+
+	//send msg to content script to get crns
+	chrome.tabs.sendMessage(tabs[0].id, {
+		'msg': 'hi'
+	}, function (crns) {
+
+		//redirect to loris login, fill in values and attempt to login
+		//if not register page, alert
+		chrome.tabs.update({
+			'url': "https://loris.wlu.ca/ssb_prod/twbkwbis.P_ValLogin"
+		}, function () {
+			//send msg to content script to modify page
+			chrome.tabs.sendMessage(tabs[0].id, $('#loris-login-submit').serializeArray(), function (response) {
+				//check whether still on login page
+				chrome.tabs.query({
+					'active': true,
+					'currentWindow': true,
+					'url': 'https://loris.wlu.ca/ssb_prod/twbkwbis.P_ValLogin'
+				}, function (tabs) {
+					//if still on login, alert and return
+					if (tabs == null) {
+						alert("Your login didn't work!");
+						return;
+					}
+					//else, open register for course page
+					chrome.tabs.update({
+						'url': "https://loris.wlu.ca/ssb_prod/bwskfreg.P_AltPin"
+					}, function () {
+						//send msg to content script to modify page
+						chrome.tabs.sendMessage(tabs[0].id, crns, function (response) {});
+					});
+				});
+			});
+		});
+	});
+})
 
 function logIn(email) {
 	//write to memory
 	//just need to create login key
 	userData['email'] = email;
-	chrome.storage.sync.set({ storageKey: userData }, function () { });
+	chrome.storage.sync.set({
+		storageKey: userData
+	}, function () {});
 
 	//switch login tab to logout
 	loggedIn();
