@@ -50,7 +50,7 @@ $('form').submit(false);
 //on login submit
 //rely on browser to do front-end validation (back-end will do final validation)
 //trigger fade-in fade-out success modal on good login
-$('#login-submit').click(function (event) {
+$('#login-submit').click(function () {
 	//check to make sure that the browser hasn't marked any of the fields invalid
 	//won't be marked invalid if user hasn't clicked in it, so check length too
 	if ($('#login-form input').hasClass('invalid') ||
@@ -91,9 +91,7 @@ $('#login-submit').click(function (event) {
 });
 
 //register button listener
-$('#registration-submit').click(function (event) {
-	event.preventDefault();
-
+$('#registration-submit').click(function () {
 	//show confirm password field if not already
 	if ($('#confirm-password-wrapper').hasClass('hide')) {
 		$('#confirm-password-wrapper').removeClass('hide');
@@ -258,6 +256,53 @@ $('#add-schedule-submit').click(function () {
 	});
 });
 
+//open modal to confirm remove all courses
+$('#remove-courses-btn').click(function () {
+	var modal = $('#confirm-remove-courses-modal');
+	var instance = M.Modal.init(modal, {});
+	instance = M.Modal.getInstance(modal);
+	instance.open()
+});
+
+//if click confirm remove all courses, remove all courses
+$('#confirm-remove-courses-btn').click(function () {
+	var post = $.post(serverUrl + "remove-course-controller.php", 'ALL', function () { });
+	post.fail(function () {
+		console.log("Remove all courses request to server failed");
+	});
+	post.done(function (data) {
+		delete userData['courses'];
+	});
+
+	//close modal
+	var instance = M.Modal.init(modal, {});
+	instance.close()
+});
+
+//open modal to confirm remove all schedules
+$('#remove-schedules-btn').click(function () {
+	var modal = $('#confirm-remove-schedules-modal');
+	var instance = M.Modal.init(modal, {});
+	instance = M.Modal.getInstance(modal);
+	instance.open()
+});
+
+//if click confirm remove all schedules, remove all schedules
+$('#confirm-remove-schedules-btn').click(function () {
+	var post = $.post(serverUrl + "remove-schedules-controller.php", 'ALL', function () { });
+	post.fail(function () {
+		console.log("Remove all schedules request to server failed");
+	});
+	post.done(function (data) {
+		delete userData['schedules'];
+	});
+
+	//close modal
+	var instance = M.Modal.init(modal, {});
+	instance.close()
+});
+
+
 //saved item remove icon listener
 $('.saved-item-remove').click(function (event) {
 	event.preventDefault();
@@ -268,23 +313,40 @@ $('.saved-item-remove').click(function (event) {
 
 	//if schedule collection, remove schedule
 	if (collection.attr('id') == "saved-schedules-collection") {
-		//delete userData['schedules'][itemId];
-		//var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () { });
-
+		delete userData['schedules'][itemId];
+		var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () { });
+		post.fail(function () {
+			console.log('Remove schedule request to server failed');
+		});
 	}
 	//else, course collection, remove course
 	else {
-		//delete userData['courses'][itemId];
-		//var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () { });
+		delete userData['courses'][itemId];
+		var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () { });
+		post.fail(function () {
+			console.log('Remove course request to server failed');
+		});
 	}
 
 	//remove item from UI
 	item.css('margin-left', '26em');
 
-	setTimeout(function() {
+	setTimeout(function () {
 		item.remove();
 	}, 600);
-})
+});
+
+//redirect page to vsb
+$('#create-schedule-tab').click(function() {
+	window.location.href = "https://scheduleme.wlu.ca/vsb/criteria.jsp?access=0&lang=en&tip=1&page=results&scratch=0&advice=0&term=0&sort=none&filters=iiiiiiiii&bbs=&ds=&cams=0_1_2_3_4_5_6_7_8_9_C_I_K_T_V_W_X_Z_A_B_D_G_R_J_P_S_M_O_Y_E_F_H_L_N_Q_SNP_CC_WEB&locs=any&isrts=";
+});
+//redirect page to vsb
+$('.no-link-colour').click(function() {
+	window.location.href = "https://scheduleme.wlu.ca/vsb/criteria.jsp?access=0&lang=en&tip=1&page=results&scratch=0&advice=0&term=0&sort=none&filters=iiiiiiiii&bbs=&ds=&cams=0_1_2_3_4_5_6_7_8_9_C_I_K_T_V_W_X_Z_A_B_D_G_R_J_P_S_M_O_Y_E_F_H_L_N_Q_SNP_CC_WEB&locs=any&isrts=";
+});
+
+
+
 
 function logIn(email) {
 	//write to memory
