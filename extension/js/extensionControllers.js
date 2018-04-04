@@ -32,6 +32,19 @@ chrome.storage.sync.get(storageKey, function (result) {
 	loggedIn();
 });
 
+//if on vsb, make add schedule tab a dropdown
+//and enable register tab
+chrome.tabs.query({
+	'active': true,
+	'currentWindow': true,
+	'url': 'https://scheduleme.wlu.ca/vsb/*'
+}, function (tabs) {
+	if (tabs != null) {
+		$('#add-schedule-tab').removeClass('collapse-disabled');
+		$('#register-courses-tab').removeClass('hide');
+	}
+});
+
 //listeners for extension.html
 
 //Toggle accordian icons. Look for .svg since fa js inserts svg into i
@@ -145,6 +158,9 @@ $('#registration-submit').click(function () {
 //logout listener
 $('#logout-tab').click(function () {
 	//clear memory
+	chrome.storage.sync.remove({
+		storageKey
+	});
 
 	alert('Logged out');
 
@@ -339,17 +355,18 @@ $('.saved-item-remove').click(function (event) {
 	}, 600);
 });
 
-//redirect page to vsb on create schedule tab click
-$('#create-schedule-tab').click(function (event) {
-	event.preventDefault();
-	chrome.tabs.update({
-		'url': "https://scheduleme.wlu.ca/vsb/"
-	}, function () {
-		$(this).addClass('hide');
-		$('#add-schedule-tab').removeClass('disabled');
-		$('#register-courses-tab').removeClass('hide');
-	});
-});
+
+$('#add-schedule-tab').click(function () {
+	//if disabled (and not on vsb), then enable and go to vsb
+	if ($(this).hasClass('collapse-disabled')) {
+		chrome.tabs.update({
+			'url': "https://scheduleme.wlu.ca/vsb/"
+		}, function () {
+			$('#add-schedule-tab').removeClass('collapse-disabled');
+			$('#register-courses-tab').removeClass('hide');
+		});
+	}
+})
 
 //open new tab on saved course item click 
 $('#saved-courses-tab .saved-item').click(function (event) {
@@ -368,8 +385,7 @@ $('#saved-courses-tab .saved-item').click(function (event) {
 			chrome.tabs.update({
 				'url': "html/courseDetail.html"
 			}, function () {
-				$('#create-schedule-tab').removeClass('hide');
-				$('#add-schedule-tab').addClass('disabled');
+				$('#add-schedule-tab').addClass('collapse-disable');
 				$('#register-courses-tab').addClass('hide');
 
 				//send msg to content script to modify page
@@ -390,8 +406,7 @@ $('#saved-schedules-tab .saved-item').click(function (event) {
 	chrome.tabs.update({
 		'url': link
 	}, function () {
-		$('#create-schedule-tab').addClass('hide');
-		$('#add-schedule-tab').removeClass('disabled');
+		$('#add-schedule-tab').removeClass('collapse-disabled');
 		$('#register-courses-tab').removeClass('hide');
 	});
 });
@@ -472,5 +487,4 @@ function loggedIn() {
 		$('#logout-tab').hide();
 		$('#logout-tab').fadeIn();
 	});
-
 }

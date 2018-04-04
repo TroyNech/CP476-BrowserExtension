@@ -58,11 +58,34 @@
         /*prevent icon div from forcing text to wrap*/
 
         .collapsible-header {
-            white-space: nowrap
+            white-space: nowrap;
         }
 
-        .disabled {
-            background-color:#e0e0e0;
+        .collapsible-header:hover {
+            background-color: #ddd;
+        }
+
+        .collapsible .active .collapsible-header {
+            background-color: #ddd;
+        }
+
+        .disabled .collapsible-header {
+            background-color: #eeeeee;
+        }
+
+        .disabled .collapsible-body,
+        .collapse-disabled .collapsible-body {
+            display: none !important;
+        }
+
+        .disabled .tab-icon-wrapper,
+        .collapse-disabled .tab-icon-wrapper {
+            display: none !important;
+        }
+
+        .disabled .collapsible-header:hover {
+            background-color: #eeeeee;
+            cursor: default;
         }
 
         .tab-icon-wrapper {
@@ -146,7 +169,6 @@
 
         #open-courses,
         #remove-courses,
-        #open-schedules,
         #remove-schedules {
             display: block;
             margin: auto;
@@ -154,7 +176,8 @@
         }
 
         #open-courses,
-        #open-schedules {
+        #remove-courses,
+        #remove-schedules {
             margin-top: 2rem;
         }
 
@@ -194,7 +217,7 @@
         a {
             font-size: 1em !important;
         }
-        
+
         #help-icon {
             margin: 15px 0 10px 10px;
         }
@@ -204,7 +227,7 @@
 <body>
     <ul class="collapsible" id="action-accordion">
         <li id="login-tab">
-            <div class="collapsible-header" disabled>
+            <div class="collapsible-header">
                 <span>Login</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -226,7 +249,7 @@
                         <label for="login-password">Password</label>
                         <input id="login-password" name="login-password" class="validate" type="password" required>
                     </div>
-                    <a id="forgot-password" href="">Forgot Password</a>
+                    <!--   <a id="forgot-password" href="">Forgot Password</a> -->
                     <div class="input-field hide" id="confirm-password-wrapper">
                         <i class="fas fa-lock fa-xs prefix"></i>
                         <label for="confirm-password">Confirm Password</label>
@@ -278,12 +301,12 @@
             </div>
         </li>
         <li id="logout-tab" class="hide">
-            <div class="collapsible-header disabled">
+            <div class="collapsible-header">
                 <span>Logout</span>
             </div>
         </li>
         <li id="add-course-tab">
-            <div class="collapsible-header disabled">
+            <div class="collapsible-header">
                 <span>Add Course</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -313,7 +336,7 @@
             </div>
         </li>
         <li id="saved-courses-tab" class="saved-item-tab">
-            <div class="collapsible-header disabled">
+            <div class="collapsible-header">
                 <span>Saved Courses</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -340,7 +363,7 @@
                         </li>
                     </ul>
                 </div>
-                <button class="btn" id="open-courses">Open All Courses</button>
+                <!-- <button class="btn" id="open-courses">Open All Courses</button>-->
                 <button class="btn-small negative-btn" id="remove-courses">Remove All Courses</button>
             </div>
 
@@ -352,15 +375,8 @@
                 </div>
             </div>
         </li>
-        <li id="create-schedule-tab">
-            <a class="no-link-colour" href="#">
-                <div class="collapsible-header disabled">
-                    <span>Create Schedule</span>
-                </div>
-            </a>
-        </li>
-        <li id="add-schedule-tab">
-            <div class="collapsible-header disabled">
+        <li id="add-schedule-tab" class="collapse-disabled">
+            <div class="collapsible-header">
                 <span>Add Schedule</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -381,7 +397,7 @@
             </div>
         </li>
         <li id="saved-schedules-tab" class="saved-item-tab">
-            <div class="collapsible-header disabled">
+            <div class="collapsible-header">
                 <span>Saved Schedules</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -408,7 +424,6 @@
                         </li>
                     </ul>
                 </div>
-                <button class="btn saved" id="open-schedules">Open All Schedules</button>
                 <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button>
             </div>
 
@@ -420,9 +435,9 @@
                 </div>
             </div>
         </li>
-        <li id="register-courses-tab">
+        <li id="register-courses-tab" class="hide">
             <a class="no-link-colour" href="#">
-                <div class="collapsible-header disabled">
+                <div class="collapsible-header">
                     <span>Register in Courses</span>
                 </div>
             </a>
