@@ -1,4 +1,6 @@
-var serverUrl = "https://laurierlink.herokuapp.com/";
+var serverUrl = "http://anthonyswebsite.com/CP476Final/";
+var storageKey = "laurier-link";
+var userData = [];
 
 //Initialize collapsible elements
 var elem = $('.collapsible');
@@ -8,6 +10,27 @@ var instance = M.Collapsible.init(elem, null);
 var elem = $('select');
 var instance = M.FormSelect.init(elem, null);
 
+//read storage and setup extension
+chrome.storage.sync.get(storageKey, function (result) {
+	console.log('initial setup start');
+	console.log(result);
+	console.log(JSON.parse(result));
+	console.log('initial setup end');
+
+	if (jQuery.isEmptyObject(result)) {
+		return;
+	}
+
+	userData = JSON.parse(result);
+
+	//if login key exists, then logged in
+	if (!('login' in userData)) {
+		return;
+	}
+
+	//else, logged in
+	loggedIn();
+});
 
 //listeners for extension.html
 
@@ -35,34 +58,36 @@ $('#login-submit').click(function (event) {
 		return;
 	}
 
-	/*             var post = $.post(serverUrl + "login-controller", $('#login-form').serialize(), function () {});
-				post.fail(function () {
-					console.log("Login request to server failed");
-				});
-				post.done(function (data) {
-					if (data === "valid") { */
-	var modal = $('#login-success-modal');
-	var instance = M.Modal.init(modal, {
-		'inDuration': 1000,
-		'outDuration': 1000,
-		'onCloseEnd': loggedIn
+	var post = $.post(serverUrl + "login-controller.php", $('#login-form').serialize(), function () { });
+	post.fail(function () {
+		console.log("Login request to server failed");
 	});
-	instance = M.Modal.getInstance(modal);
-	instance.open()
-	modal.blur();
+	post.done(function (data) {
+		data = JSON.parse(data);
+		if (data['result'] == true) {
+			var modal = $('#login-success-modal');
+			var instance = M.Modal.init(modal, {
+				'inDuration': 1000,
+				'outDuration': 1000
+			});
+			instance = M.Modal.getInstance(modal);
+			instance.open()
+			modal.blur();
+			var email = $('#login-email').val();
 
-	setTimeout(function () {
-		instance.close();
-	}, 1000);
-	/*  } else if (data === "invalid") {
-		alert("Your login is invalid!");
-	}
-	else {
-		console.log("Unexepected data from server");
-	}
-	}
-	 }) 
-	 */
+			setTimeout(function () {
+				instance.close();
+				setTimeout(function () {
+					logIn(email);
+				});
+			}, 1000);
+		} else if (data['result'] == false) {
+			alert("Your login is invalid!");
+		}
+		else {
+			console.log("Unexepected data from server");
+		}
+	});
 });
 
 //register button listener
@@ -71,7 +96,7 @@ $('#registration-submit').click(function (event) {
 
 	//show confirm password field if not already
 	if ($('#confirm-password-wrapper').hasClass('hide')) {
-		$('#confirm-password-wrapper').addClass('hide');
+		$('#confirm-password-wrapper').removeClass('hide');
 		return;
 	}
 
@@ -90,17 +115,21 @@ $('#registration-submit').click(function (event) {
 
 	//else, passwords match
 	//send to server
-	var post = $.post(serverUrl + "registration-controller", $('#login-form').serialize(), function () {});
+	var post = $.post(serverUrl + "registration-controller.php", $('#login-form').serialize(), function () { });
 	post.fail(function () {
 		console.log("Registration request to server failed");
 	});
 	post.done(function (data) {
-		if (data === "valid") {
+		data = JSON.parse(data);
+
+		if (data['result'] == true) {
 			var modal = $('#registration-msg');
 			var instance = M.Modal.init(modal, {
 				'inDuration': 1000,
 				'outDuration': 1000,
 			});
+
+			logIn($('#login-email').val());
 			instance = M.Modal.getInstance(modal);
 			instance.open()
 			modal.blur();
@@ -108,7 +137,7 @@ $('#registration-submit').click(function (event) {
 			setTimeout(function () {
 				instance.close();
 			}, 2000);
-		} else if (data === "invalid") {
+		} else if (data['result'] == false) {
 			alert("Your login is invalid!");
 		} else {
 			console.log("Unexepected data from server");
@@ -135,14 +164,19 @@ $('#add-course-submit').click(function () {
 		return;
 	}
 
-	//else, submit form
-	//send to server
-	var post = $.post(serverUrl + "add-course-controller", $('#add-course-form').serialize(), function () {});
+	//else, submit form to server
+
+	var toSend = $('#add-course-form').serializeArray();
+	toSend['login-email'] = userData['email'];
+
+	var post = $.post(serverUrl + "add-course-controller.php", JSON.stringify(toSend), function () { });
 	post.fail(function () {
 		console.log("Add course request to server failed");
 	});
 	post.done(function (data) {
-		if (data === "valid") {
+		data = JSON.parse(data);
+
+		if ('id' in data) {
 			var msg = $('#course-added-msg');
 			msg.removeClass('hide');
 			msg.hide();
@@ -153,21 +187,119 @@ $('#add-course-submit').click(function () {
 					});
 				});
 			});
-		} else if (data === "invalid") {
+
+			var course = data;
+
+			//add course to saved-courses tab
+			var courseItem = $('template .collection-item').clone();
+			courseItem.attr('id', course['id']);
+			courseItem.find('.saved-item span').val(course['course-title']);
+			$('#saved-courses-collection').append(courseItem);
+
+			//add to courses list and write back to storage
+			userData['courses'][course['id']] = course;
+			chrome.storage.sync.set({ storageKey: userData }, function () {
+				console.log('Value is set to ' + userData);
+			});
+		} else {
 			$('#add-course-code').addClass('invalid');
-			return;
+			console.log("Unexepected data from server");
+		}
+	});
+});
+
+//add schedule listener
+$('#add-schedule-submit').click(function () {
+	//verify that a schedule name is given
+	if ($('#add-schedule-name').val().length === 0) {
+		return;
+	}
+
+	//submit form to server
+
+	var toSend = $('#add-schedule-form').serializeArray();
+	toSend['login-email'] = userData['email'];
+
+	var post = $.post(serverUrl + "add-schedule-controller.php", JSON.stringify(toSend), function () { });
+	post.fail(function () {
+		console.log("Add schedule request to server failed");
+	});
+	post.done(function (data) {
+		data = JSON.parse(data);
+
+		if ('id' in data) {
+			var msg = $('#schedule-added-msg');
+			msg.removeClass('hide');
+			msg.hide();
+			msg.fadeIn(400, function () {
+				setTimeout(2000, function () {
+					msg.fadeOut('400', function () {
+						msg.addClass('hide');
+					});
+				});
+			});
+
+			var schedule = data;
+
+			//add course to saved-courses tab
+			var scheduleItem = $('template .collection-item').clone();
+			scheduleItem.attr('id', schedule['id']);
+			scheduleItem.find('.saved-item span').val(schedule['add-schedule-name']);
+			$('#saved-schedules-collection').append(scheduleItem);
+
+			//add to schedules list and write back to storage
+			userData['schedules'][schedule['id']] = schedule;
+			chrome.storage.sync.set({ storageKey: userData }, function () {
+				console.log('Value is set to ' + userData);
+			});
 		} else {
 			console.log("Unexepected data from server");
 		}
 	});
 });
 
+//saved item remove icon listener
+$('.saved-item-remove').click(function (event) {
+	event.preventDefault();
 
+	var item = $(event.target.closest('.collection-item'));
+	var itemId = item.attr('id');
+	var collection = item.closest('.collection');
 
-function loggedIn() {
-	//write to memory that logged in
+	//if schedule collection, remove schedule
+	if (collection.attr('id') == "saved-schedules-collection") {
+		//delete userData['schedules'][itemId];
+		//var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () { });
+
+	}
+	//else, course collection, remove course
+	else {
+		//delete userData['courses'][itemId];
+		//var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () { });
+	}
+
+	//remove item from UI
+	item.css('margin-left', '26em');
+
+	setTimeout(function() {
+		item.remove();
+	}, 600);
+})
+
+function logIn(email) {
+	//write to memory
+	//just need to create login key
+	userData['email'] = email;
+	chrome.storage.sync.set({ storageKey: userData }, function () { });
 
 	//switch login tab to logout
+	loggedIn();
+}
+
+//switch login tab to logout
+function loggedIn() {
+	//	$('.collapsible-header').
+
 	$('#login-tab').fadeOut(400, function () {
 		$('#login-tab').addClass('hide');
 		$('#logout-tab').removeClass('hide');

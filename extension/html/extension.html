@@ -19,17 +19,31 @@
     <!--
     <link rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
     -->
+    <link rel="import" href="html/templates.html">
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <style>
-        body {
-            font-size: 12px;
-            min-width: 25em;
+        ::-webkit-scrollbar {
+            width: 0px;
+            /* remove scrollbar space */
+            background: transparent;
+            /* optional: just make scrollbar invisible */
         }
 
-        .collapsible-header:focus, .modal:focus {
+        html {
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-size: 12px;
+            width: 25em;
+        }
+
+        .collapsible-header:focus,
+        .modal:focus {
             outline: none !important;
         }
 
@@ -38,13 +52,17 @@
         }
 
         #action-accordion {
-            margin-top: 0;
+            margin: 0;
         }
 
         /*prevent icon div from forcing text to wrap*/
 
         .collapsible-header {
             white-space: nowrap
+        }
+
+        .disabled {
+            background-color:#e0e0e0;
         }
 
         .tab-icon-wrapper {
@@ -95,18 +113,23 @@
             margin-bottom: 2.5rem;
         }
 
-        #saved-courses-tab .collapsible-body {
+        .saved-item-tab .collapsible-body {
             padding: 0 0 2rem;
         }
 
-        #saved-courses-tab .collection .collection-item {
+        .saved-item-card .collection {
+         /*   overflow: hidden;*/
+        }
+
+        .saved-item-tab .collection .collection-item {
             display: flex;
             -webkit-transition: .25s;
             transition: .25s;
             color: #26a69a;
+            transition: margin-left .5s;
         }
 
-        #saved-courses-tab .collection .collection-item:hover {
+        .saved-item-tab .collection .collection-item:hover {
             background-color: #ddd;
         }
 
@@ -120,7 +143,7 @@
             padding-left: 5px;
         }
 
-        #saved-courses-tab .card-panel {
+        .saved-item-card {
             margin: 0 0 1rem;
             padding: 0;
         }
@@ -169,8 +192,15 @@
             font-size: 1em;
         }
 
-        input, label, button, a {
+        input,
+        label,
+        button,
+        a {
             font-size: 1em !important;
+        }
+        
+        #help-icon {
+            margin: 15px 0 10px 10px;
         }
     </style>
 </head>
@@ -178,7 +208,7 @@
 <body>
     <ul class="collapsible" id="action-accordion">
         <li id="login-tab">
-            <div class="collapsible-header">
+            <div class="collapsible-header" disabled>
                 <span>Login</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -192,19 +222,19 @@
                     <div class="input-field">
                         <i class="fas fa-envelope fa-xs prefix"></i>
                         <label for="login-email">Email</label>
-                        <input id="login-email" class="validate" type="email" required>
+                        <input id="login-email" name="login-email" class="validate" type="email" required>
                         <span class="helper-text" data-error="Email invalid"></span>
                     </div>
                     <div class="input-field">
                         <i class="fas fa-lock fa-xs prefix"></i>
                         <label for="login-password">Password</label>
-                        <input id="login-password" class="validate" type="password" required>
+                        <input id="login-password" name="login-password" class="validate" type="password" required>
                     </div>
                     <a id="forgot-password" href="">Forgot Password</a>
                     <div class="input-field hide" id="confirm-password-wrapper">
                         <i class="fas fa-lock fa-xs prefix"></i>
                         <label for="confirm-password">Confirm Password</label>
-                        <input id="confirm-password" class="validate" type="password">
+                        <input id="confirm-password" name="confirm-password" class="validate" type="password">
                         <span class="helper-text" data-error="Passwords do not match"></span>
                     </div>
                     <div class="input-field">
@@ -235,12 +265,12 @@
                             <div class="input-field">
                                 <i class="fas fa-lock fa-xs prefix"></i>
                                 <label for="new-password">New Password</label>
-                                <input id="new-password" type="password" required>
+                                <input id="new-password" name="new-password" type="password" required>
                             </div>
                             <div class="input-field" id="confirm-password-wrapper">
                                 <i class="fas fa-lock fa-xs prefix"></i>
                                 <label for="confirm-new-password">Confirm Password</label>
-                                <input id="confirm-new-password" type="password" required>
+                                <input id="confirm-new-password" name="confirm-new-password" type="password" required>
                                 <span class="helper-text" data-error="Passwords do not match"></span>
                             </div>
                             <div class="input-field">
@@ -252,12 +282,12 @@
             </div>
         </li>
         <li id="logout-tab" class="hide">
-            <div class="collapsible-header">
+            <div class="collapsible-header disabled">
                 <span>Logout</span>
             </div>
         </li>
         <li id="add-course-tab">
-            <div class="collapsible-header">
+            <div class="collapsible-header disabled">
                 <span>Add Course</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -266,7 +296,7 @@
             <div class="collapsible-body">
                 <form id="add-course-form">
                     <div class="input-field">
-                        <select id="term">
+                        <select id="term" name="term">
                             <option value="fall">Fall</option>
                             <option value="winter">Winter</option>
                             <option value="spring">Spring</option>
@@ -275,7 +305,7 @@
                     </div>
                     <div class="input-field">
                         <label for="add-course-code">Course Code</label>
-                        <input id="add-course-code" type="text" placeholder="CP 476" required>
+                        <input id="add-course-code" name="add-course-code" type="text" placeholder="CP 476" required>
                         <span class="helper-text" data-error="Course code invalid. Is the correct term selected?"></span>
                     </div>
                     <div class="input-field">
@@ -286,15 +316,15 @@
                 <div id="course-added-msg" class="success-msg hide">Course added</div>
             </div>
         </li>
-        <li id="saved-courses-tab">
-            <div class="collapsible-header">
+        <li id="saved-courses-tab" class="saved-item-tab">
+            <div class="collapsible-header disabled">
                 <span>Saved Courses</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
                 </div>
             </div>
             <div class="collapsible-body">
-                <div class="card-panel">
+                <div class="card-panel saved-item-card">
                     <ul class="collection" id="saved-courses-collection">
                         <li class="collection-item">
                             <a class="saved-item valign-wrapper" href="">
@@ -314,8 +344,8 @@
                         </li>
                     </ul>
                 </div>
-                <button class="btn modal-btn-1" id="open-courses">Open All Courses</button>
-                <button class="btn-small negative-btn modal-btn-2" id="remove-courses">Remove All Courses</button>
+                <button class="btn" id="open-courses">Open All Courses</button>
+                <button class="btn-small negative-btn" id="remove-courses">Remove All Courses</button>
             </div>
 
             <div id="confirm-remove-courses-modal" class="modal">
@@ -328,13 +358,13 @@
         </li>
         <li id="create-schedule-tab">
             <a class="no-link-colour" href="#">
-                <div class="collapsible-header">
+                <div class="collapsible-header disabled">
                     <span>Create Schedule</span>
                 </div>
             </a>
         </li>
         <li id="add-schedule-tab">
-            <div class="collapsible-header">
+            <div class="collapsible-header disabled">
                 <span>Add Schedule</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
@@ -344,26 +374,26 @@
                 <form id="add-schedule-form">
                     <div class="input-field">
                         <label for="add-schedule-name">Name</label>
-                        <input id="add-schedule-name" type="text" required>
+                        <input id="add-schedule-name" name="add-schedule-name" type="text" required>
                     </div>
                     <div class="input-field">
                         <button class="btn" id="add-schedule-submit" type="submit">Add</button>
                     </div>
                 </form>
 
-                <div class="success-msg">Schedule added</div>
+                <div class="success-msg hide" id="schedule-added-msg">Schedule added</div>
             </div>
         </li>
-        <li id="saved-schedules-tab">
-            <div class="collapsible-header">
+        <li id="saved-schedules-tab" class="saved-item-tab">
+            <div class="collapsible-header disabled">
                 <span>Saved Schedules</span>
                 <div class="tab-icon-wrapper">
                     <i class="fas fa-caret-right fa-lg tab-icon"></i>
                 </div>
             </div>
             <div class="collapsible-body">
-                <div class="card-panel">
-                    <ul class="collection" id="saved-courses-collection">
+                <div class="card-panel saved-item-card">
+                    <ul class="collection" id="saved-schedules-collection">
                         <li class="collection-item">
                             <a class="saved-item valign-wrapper" href="">
                                 <span>Alvin</span>
@@ -396,7 +426,7 @@
         </li>
         <li id="register-courses-tab">
             <a class="no-link-colour" href="#">
-                <div class="collapsible-header">
+                <div class="collapsible-header disabled">
                     <span>Register in Courses</span>
                 </div>
             </a>
@@ -415,13 +445,13 @@
                         <div class="input-field">
                             <i class="fas fa-envelope fa-xs prefix"></i>
                             <label for="loris-email">Email</label>
-                            <input id="loris-email" class="validate" type="email" required>
+                            <input id="loris-email" name="loris-email" class="validate" type="email" required>
                             <span class="helper-text" data-error="Email invalid"></span>
                         </div>
                         <div class="input-field">
                             <i class="fas fa-lock fa-xs prefix"></i>
                             <label for="loris-password">Password</label>
-                            <input id="loris-password" type="password" required>
+                            <input id="loris-password" name="loris-password" type="password" required>
                         </div>
 
                         <div class="input-field">
@@ -434,9 +464,9 @@
 
         </li>
     </ul>
-    <i class="fas fa-question-circle fa-2x"></i>
+    <i id="help-icon" class="fas fa-question-circle fa-2x"></i>
 
-    <div id="help-modal" class="modal">
+    <div id="loris-login-modal" class="modal">
         <div class="modal-content">
             <h4>Enter Login Information</h4>
             <p>
@@ -447,13 +477,13 @@
                 <div class="input-field">
                     <i class="fas fa-envelope fa-xs prefix"></i>
                     <label for="loris-email">Email</label>
-                    <input id="loris-email" class="validate" type="email" required>
+                    <input id="loris-email" name="loris-email" class="validate" type="email" required>
                     <span class="helper-text" data-error="Email invalid"></span>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock fa-xs prefix"></i>
                     <label for="loris-password">Password</label>
-                    <input id="loris-password" type="password" required>
+                    <input id="loris-password" name="loris-password" type="password" required>
                 </div>
 
                 <div class="input-field">

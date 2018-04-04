@@ -1,21 +1,21 @@
 {
-    "manifest_version": 2,
-    "name": "LaurierLinks",  
-    "description": "placeholder",  
-    "version": "1.0",
-    
-    "permissions": [
-          "tabs", "*://*/*", "activeTab"
-        ],
-
-    "browser_action": { 
+	"manifest_version": 2,
+	"name": "LaurierLinks",
+	"description": "placeholder",
+	"version": "1.0",
+	"permissions": [
+		"tabs",
+		"*://*/*",
+		"activeTab",
+		"storage"
+	],
+	"browser_action": {
 		"default_icon": {
 			"19": "images/icons/19.png",
 			"38": "images/icons/38.png"
 		},
-        "default_popup": "html/extension.html"  
-    },
-	
+		"default_popup": "html/extension.html"
+	},
 	"icons": {
 		"16": "images/icons/16.png",
 		"19": "images/icons/19.png",
