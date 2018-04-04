@@ -93,6 +93,11 @@
             width: 100%;
         }
 
+        #help-icon-wrapper {
+            display: inline-block;
+            cursor: pointer;
+        }
+
         .tab-icon {
             position: absolute;
             right: 10px;
@@ -345,22 +350,6 @@
             <div class="collapsible-body">
                 <div class="card-panel saved-item-card">
                     <ul class="collection" id="saved-courses-collection">
-                        <li class="collection-item">
-                            <a class="saved-item valign-wrapper" href="">
-                                <span>Alvin</span>
-                            </a>
-                            <a class="saved-item-remove" href="">
-                                <i class="fas fa-times-circle" style="color:red"></i>
-                            </a>
-                        </li>
-                        <li class="collection-item">
-                            <a class="saved-item valign-wrapper" href="">
-                                <span>Alvin</span>
-                            </a>
-                            <a class="saved-item-remove" href="">
-                                <i class="fas fa-times-circle" style="color:red"></i>
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 <!-- <button class="btn" id="open-courses">Open All Courses</button>-->
@@ -406,22 +395,6 @@
             <div class="collapsible-body">
                 <div class="card-panel saved-item-card">
                     <ul class="collection" id="saved-schedules-collection">
-                        <li class="collection-item">
-                            <a class="saved-item valign-wrapper" href="">
-                                <span>Alvin</span>
-                            </a>
-                            <a class="saved-item-remove" href="">
-                                <i class="fas fa-times-circle" style="color:red"></i>
-                            </a>
-                        </li>
-                        <li class="collection-item">
-                            <a class="saved-item valign-wrapper" href="">
-                                <span>Alvin</span>
-                            </a>
-                            <a class="saved-item-remove" href="">
-                                <i class="fas fa-times-circle" style="color:red"></i>
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button>
@@ -474,7 +447,9 @@
 
         </li>
     </ul>
-    <i id="help-icon" class="fas fa-question-circle fa-2x"></i>
+    <div id="help-icon-wrapper">
+        <i id="help-icon" class="fas fa-question-circle fa-2x"></i>
+    </div>
 
     <div id="loris-login-modal" class="modal">
         <div class="modal-content">

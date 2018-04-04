@@ -465,6 +465,10 @@ $('#loris-login-submit').click(function () {
 	});
 })
 
+$('#help-icon-wrapper').click(function() {
+	alert('Help!');
+})
+
 function logIn(email) {
 	//write to memory
 	//just need to create login key
