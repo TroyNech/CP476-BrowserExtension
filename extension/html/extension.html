@@ -226,6 +226,10 @@
         #help-icon {
             margin: 15px 0 10px 10px;
         }
+
+        .saved-item-remove {
+            cursor:pointer;
+        }
     </style>
 </head>
 
@@ -397,7 +401,7 @@
                     <ul class="collection" id="saved-schedules-collection">
                     </ul>
                 </div>
-              <!-- <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button> -->
+                <!-- <button class="btn-small negative-btn" id="remove-schedules">Remove All Schedules</button> -->
             </div>
 
             <div id="confirm-remove-schedules-modal" class="modal">
@@ -445,10 +449,37 @@
                 </div>
             </div>
         </li>
+        <!--
+        <li id="animal-tab">
+            <div class="collapsible-header">
+                <span>OOP</span>
+                <div class="tab-icon-wrapper">
+                    <i class="fas fa-caret-right fa-lg tab-icon"></i>
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <div class="card-panel">
+                    <span>Animal</span>
+                </div>
+                <div class="card-panel">
+                    <span>Animal</span>
+                </div>
+        </li>
+    -->
     </ul>
     <div id="help-icon-wrapper">
         <i id="help-icon" class="fas fa-question-circle fa-2x"></i>
     </div>
+
+        <li id="clone" class="collection-item hide">
+            <a class="saved-item valign-wrapper">
+                <span>Alvin</span>
+            </a>
+            <a class="saved-item-remove">
+                <i class="fas fa-times-circle" style="color:red"></i>
+            </a>
+        </li>
+
 
     <!--JavaScript at end of body for optimized loading-->
     <!--Use local unminified for testing-->

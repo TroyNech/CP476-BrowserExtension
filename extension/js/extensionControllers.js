@@ -1,6 +1,5 @@
 var serverUrl = "http://anthonyswebsite.com/CP476Final/";
-var storageKey = "laurier-link";
-var userData = [];
+var userData = {};
 
 //Initialize collapsible elements
 var elem = $('.collapsible');
@@ -11,13 +10,14 @@ var elem = $('select');
 var instance = M.FormSelect.init(elem, null);
 
 //read storage and setup extension
-chrome.storage.sync.get(storageKey, function (result) {
+chrome.storage.sync.get("laurier-link", function (result) {
+	console.log(result);
 	if (jQuery.isEmptyObject(result)) {
 		return;
 	}
 
 	//else, logged in
-	userData = JSON.parse(result);
+	userData = result['laurier-link'];
 
 	loggedIn();
 });
@@ -61,7 +61,7 @@ $('#login-submit').click(function () {
 		return;
 	}
 
-	var post = $.post(serverUrl + "login-controller.php", $('#login-form').serialize(), function () {});
+	var post = $.post(serverUrl + "login-controller.php", $('#login-form').serialize(), function () { });
 	post.fail(function () {
 		console.log("Login request to server failed");
 	});
@@ -115,7 +115,7 @@ $('#registration-submit').click(function () {
 
 	//else, passwords match
 	//send to server
-	var post = $.post(serverUrl + "registration-controller.php", $('#login-form').serialize(), function () {});
+	var post = $.post(serverUrl + "registration-controller.php", $('#login-form').serialize(), function () { });
 	post.fail(function () {
 		console.log("Registration request to server failed");
 	});
@@ -148,9 +148,7 @@ $('#registration-submit').click(function () {
 //logout listener
 $('#logout-tab').click(function () {
 	//clear memory
-	chrome.storage.sync.remove({
-		storageKey
-	});
+	chrome.storage.sync.remove("laurier-link");
 
 	alert('Logged out');
 
@@ -198,57 +196,59 @@ $('#add-course-submit').click(function () {
 
 	var url = "https://loris.wlu.ca/ssb_prod/bwckctlg.p_disp_course_detail?cat_term_in=" + year.toString() + month.toString().padStart(2, '0') + "&subj_code_in=" + depart + "&crse_numb_in=" + numb;
 
-	var toSend = [];
+	var toSend = {};
 	var get = $.get(url);
 	get.done(function (response) {
 		var info = $(response).find('.nttitle')
-		toSend['title'] = info.get(0);
-		toSend['description'] = $(response).find('.ntdefault').get(0);
-	})
+		toSend['title'] = info.get(0).outerHTML;
+		toSend['description'] = $(response).find('.ntdefault').get(0).outerHTML;
 
-	toSend['term'] = term;
-	toSend['add-course-code'] = depart + " " + numb;
-	toSend['login-email'] = userData['email'];
+		toSend['term'] = term;
+		toSend['add-course-code'] = depart + " " + numb;
+		toSend['login-email'] = userData['email'];
 
-	var post = $.post(serverUrl + "add-course-controller.php", JSON.stringify(toSend), function () {});
-	post.fail(function () {
-		console.log("Add course request to server failed");
-	});
-	post.done(function (data) {
-		data = JSON.parse(data);
+		var post = $.post(serverUrl + "add-course-controller.php", toSend, function () { });
+		post.fail(function () {
+			console.log("Add course request to server failed");
+		});
+		post.done(function (data) {
+			data = JSON.parse(data);
 
-		if ('id' in data) {
-			var msg = $('#course-added-msg');
-			msg.removeClass('hide');
-			msg.hide();
-			msg.fadeIn(400, function () {
-				setTimeout(2000, function () {
-					msg.fadeOut('400', function () {
-						msg.addClass('hide');
+			if ('id' in data) {
+				var msg = $('#course-added-msg');
+				msg.removeClass('hide');
+				msg.hide();
+				msg.fadeIn(400, function () {
+					setTimeout(2000, function () {
+						msg.fadeOut(400, function () {
+							msg.addClass('hide');
+							//msg.hide();
+						});
 					});
 				});
-			});
 
-			var course = data;
+				var course = data;
 
-			//add course to saved-courses tab
-			var courseItem = $('template .collection-item').clone();
-			courseItem.attr('id', course['id']);
-			courseItem.find('.saved-item span').val(course['course-title']);
-			$('#saved-courses-collection').append(courseItem);
+				//add course to saved-courses tab
+				var courseItem = $('#clone').clone();
+				courseItem.removeClass('hide');
+				courseItem.attr('id', course['id']);
+				$('#saved-courses-collection').append(courseItem);
+				courseItem.find('.saved-item span').html(course['title']);
 
-			//add to courses list and write back to storage
-			userData['courses'][course['id']] = course;
-			chrome.storage.sync.set({
-				storageKey: userData
-			}, function () {
-				console.log('Value is set to ' + userData);
-			});
-		} else {
-			$('#add-course-code').addClass('invalid');
-			console.log("Unexepected data from server");
-		}
-	});
+				//add to courses list and write back to storage
+				userData['courses'][course['id']] = course;
+				/* 				chrome.storage.sync.set({
+									"laurier-link": userData
+								}, function () {
+									console.log('Value is set to ' + userData);
+								}); */
+			} else {
+				$('#add-course-code').addClass('invalid');
+				console.log("Unexepected data from server");
+			}
+		});
+	})
 });
 
 //add schedule listener
@@ -260,46 +260,70 @@ $('#add-schedule-submit').click(function () {
 
 	//submit form to server
 
-	var toSend = $('#add-schedule-form').serializeArray();
-	toSend['login-email'] = userData['email'];
+	var toSend = {}
+	toSend['schedule-name'] = $('#add-schedule-name').val();
 
-	var post = $.post(serverUrl + "add-schedule-controller.php", JSON.stringify(toSend), function () {});
-	post.fail(function () {
-		console.log("Add schedule request to server failed");
-	});
-	post.done(function (data) {
-		data = JSON.parse(data);
+	chrome.tabs.query({
+		'active': true,
+		'currentWindow': true,
+	}, function (tabs) {
+		toSend['schedule-link'] = encodeURIComponent(tabs[0].url);
 
-		if ('id' in data) {
-			var msg = $('#schedule-added-msg');
-			msg.removeClass('hide');
-			msg.hide();
-			msg.fadeIn(400, function () {
-				setTimeout(2000, function () {
-					msg.fadeOut('400', function () {
-						msg.addClass('hide');
+		toSend['login-email'] = userData['email'];
+
+		console.log("sending:");
+		console.log(toSend);
+
+		var post = $.post(serverUrl + "add-schedule-controller.php", toSend, function () { });
+		post.fail(function () {
+			console.log("Add schedule request to server failed");
+		});
+		post.done(function (response) {
+			console.log(response);
+
+			data = JSON.parse(response);
+
+			if ('id' in data) {
+				var msg = $('#schedule-added-msg');
+				msg.removeClass('hide');
+				msg.hide();
+				msg.fadeIn(400, function () {
+					setTimeout(2000, function () {
+						msg.fadeOut(400, function () {
+							msg.addClass('hide');
+						});
 					});
 				});
-			});
 
-			var schedule = data;
+				var schedule = data;
 
-			//add course to saved-courses tab
-			var scheduleItem = $('template .collection-item').clone();
-			scheduleItem.attr('id', schedule['id']);
-			scheduleItem.find('.saved-item span').val(schedule['add-schedule-name']);
-			$('#saved-schedules-collection').append(scheduleItem);
+				//add course to saved-courses tab
+				var scheduleItem = $('template .collection-item').clone();
+				scheduleItem.attr('id', schedule['id']);
+				scheduleItem.find('.saved-item span').val(schedule['add-name']);
+				$('#saved-schedules-collection').append(scheduleItem);
 
-			//add to schedules list and write back to storage
-			userData['schedules'][schedule['id']] = schedule;
-			chrome.storage.sync.set({
-				storageKey: userData
-			}, function () {
-				console.log('Value is set to ' + userData);
-			});
-		} else {
-			console.log("Unexepected data from server");
-		}
+				//add to schedules list and write back to storage
+				userData['schedules'][schedule['id']] = schedule;
+				/* 			chrome.storage.sync.set({
+								"laurier-link": userData
+							}, function () {
+								console.log('Value is set to ' + userData);
+							}); */
+
+
+				//add schedule to saved-schedule tab
+				var scheduleItem = $('#clone').clone();
+				scheduleItem.removeClass('hide');
+				scheduleItem.attr('id', schedule['id']);
+				$('#saved-schedules-collection').append(scheduleItem);
+				scheduleItem.find('.saved-item span').html(schedule['name']);
+				scheduleItem.find('.saved-item-remove').on("click", savedItemRemove);
+			}
+			else {
+				console.log("Unexepected data from server");
+			}
+		});
 	});
 });
 
@@ -313,7 +337,7 @@ $('#remove-courses-btn').click(function () {
 
 //if click confirm remove all courses, remove all courses
 $('#confirm-remove-courses-btn').click(function () {
-	var post = $.post(serverUrl + "remove-all-courses-controller.php", 'ALL', function () {});
+	var post = $.post(serverUrl + "remove-all-courses-controller.php", 'ALL', function () { });
 	post.fail(function () {
 		console.log("Remove all courses request to server failed");
 	});
@@ -336,7 +360,7 @@ $('#remove-schedules-btn').click(function () {
 
 //if click confirm remove all schedules, remove all schedules
 $('#confirm-remove-schedules-btn').click(function () {
-	var post = $.post(serverUrl + "remove-all-schedules-controller.php", 'ALL', function () {});
+	var post = $.post(serverUrl + "remove-all-schedules-controller.php", 'ALL', function () { });
 	post.fail(function () {
 		console.log("Remove all schedules request to server failed");
 	});
@@ -349,11 +373,9 @@ $('#confirm-remove-schedules-btn').click(function () {
 	instance.close()
 });
 
-
-//saved item remove icon listener
-$('.saved-item-remove').click(function (event) {
+function savedItemRemove(event) {
 	event.preventDefault();
-
+	console.log('hi');
 	var item = $(event.target.closest('.collection-item'));
 	var itemId = item.attr('id');
 	var collection = item.closest('.collection');
@@ -361,7 +383,7 @@ $('.saved-item-remove').click(function (event) {
 	//if schedule collection, remove schedule
 	if (collection.attr('id') == "saved-schedules-collection") {
 		delete userData['schedules'][itemId];
-		var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () {});
+		var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () { });
 		post.fail(function () {
 			console.log('Remove schedule request to server failed');
 		});
@@ -369,7 +391,7 @@ $('.saved-item-remove').click(function (event) {
 	//else, course collection, remove course
 	else {
 		delete userData['courses'][itemId];
-		var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () {});
+		var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () { });
 		post.fail(function () {
 			console.log('Remove course request to server failed');
 		});
@@ -381,11 +403,15 @@ $('.saved-item-remove').click(function (event) {
 	setTimeout(function () {
 		item.remove();
 	}, 600);
-});
-
+}
 
 $('#add-schedule-tab').click(function () {
-	//if disabled (and not on vsb), then enable and go to vsb
+	//if disabled b/c not logged in, do nothing
+	if ($(this).hasClass('disabled')) {
+		return;
+	}
+
+	//if disabled b/c not on vsb, then enable and go to vsb
 	if ($(this).hasClass('collapse-disabled')) {
 		chrome.tabs.update({
 			'url': "https://scheduleme.wlu.ca/vsb/"
@@ -397,9 +423,9 @@ $('#add-schedule-tab').click(function () {
 })
 
 //open new tab on saved course item click 
-$('#saved-courses-tab .saved-item').click(function (event) {
+/* $('#saved-courses-tab .saved-item').click(function (event) {
 	event.preventDefault();
-
+	
 	//check whether course detail page is open in current page
 	chrome.tabs.query({
 		'active': true,
@@ -407,7 +433,7 @@ $('#saved-courses-tab .saved-item').click(function (event) {
 		'url': 'file:///html/courseDetail.html'
 	}, function (tabs) {
 		var courseId = $(this).attr('id');
-
+	
 		//if not on course detail page, open it
 		if ($.isEmptyObject(tabs)) {
 			chrome.tabs.update({
@@ -415,16 +441,16 @@ $('#saved-courses-tab .saved-item').click(function (event) {
 			}, function () {
 				$('#add-schedule-tab').addClass('collapse-disable');
 				$('#register-courses-tab').addClass('hide');
-
+	
 				//send msg to content script to modify page
-				chrome.tabs.sendMessage(tabs[0].id, userData['courses'][courseId], function (response) {});
+				chrome.tabs.sendMessage(tabs[0].id, userData['courses'][courseId], function (response) { });
 			});
 		} else {
 			//send msg to content script to modify page
-			chrome.tabs.sendMessage(tabs[0].id, userData['courses'][courseId], function (response) {});
+			chrome.tabs.sendMessage(tabs[0].id, userData['courses'][courseId], function (response) { });
 		}
 	});
-});
+}); */
 
 //open schedule on saved schedule item click
 $('#saved-schedules-tab .saved-item').click(function (event) {
@@ -440,7 +466,7 @@ $('#saved-schedules-tab .saved-item').click(function (event) {
 });
 
 //open register modal on register on courses tab click
-$('register-courses-tab').click(function (event) {
+$('#register-courses-tab').click(function (event) {
 	event.preventDefault();
 
 	var modal = $('#loris-login-modal');
@@ -485,7 +511,7 @@ $('#loris-login-submit').click(function () {
 						'url': "https://loris.wlu.ca/ssb_prod/bwskfreg.P_AltPin"
 					}, function () {
 						//send msg to content script to modify page
-						chrome.tabs.sendMessage(tabs[0].id, crns, function (response) {});
+						chrome.tabs.sendMessage(tabs[0].id, crns, function (response) { });
 					});
 				});
 			});
@@ -498,33 +524,10 @@ $('#help-icon-wrapper').click(function () {
 })
 
 function logIn(email) {
-	//retrieve any items from database
-
-	var get = $.get(serverUrl + "get-courses-controller.php", email, function (results) {});
-	get.fail(function () {
-		console.log('Get courses request to server failed');
-	});
-	get.done(function () {
-		userData['courses'] = JSON.parse(response);
-	});
-
-	get = $.get(serverUrl + "get-schedules-controller.php", email, function (results) {});
-	get.fail(function () {
-		console.log('Get schedules request to server failed');
-	});
-	get.done(function () {
-		userData['schedules'] = JSON.parse(response);
-	});
-
 	userData['email'] = email;
 
-	//write to memory
-	chrome.storage.sync.set({
-		storageKey: userData
-	}, function () {});
-
 	//switch login tab to logout
-	loggedIn();
+	loggedInTransition();
 }
 
 function loggedIn() {
@@ -550,4 +553,77 @@ function loggedInTransition() {
 
 function changeNonLoginTabs() {
 	$('.disabled').removeClass('disabled');
+
+	var param = {}
+	param['user-email'] = userData['email'];
+
+	var get = $.get(serverUrl + "get-courses-controller.php", param, function (results) { });
+	get.fail(function (response) {
+		console.log('Get courses request to server failed');
+	});
+	get.done(function (response) {
+		var courses = JSON.parse(response)['result'];
+		userData['courses'] = {};
+		for (var i = 0; i < courses.length; i++) {
+			userData['courses'][courses[i]['id']] = courses[i];
+		}
+
+		get = $.get(serverUrl + "get-schedules-controller.php", param, function (results) { });
+		get.fail(function (response) {
+			console.log('Get schedules request to server failed');
+		});
+		get.done(function (response) {
+			var schedules = JSON.parse(response)['result'];
+			userData['schedules'] = {};
+			for (var i = 0; i < schedules.length; i++) {
+				userData['schedules'][schedules[i]['id']] = schedules[i];
+			}
+
+			addItems();
+
+			var toWrite = {};
+			toWrite['email'] = userData['email'];
+
+			//write to memory
+			chrome.storage.sync.set({
+				"laurier-link": toWrite
+			}, function () { });
+		});
+	});
+}
+
+function addItems() {
+	console.log('hi');
+	addCourses();
+	addSchedules();
+}
+
+function addCourses() {
+	var courses = userData['courses'];
+	for (let key of Object.keys(courses)) {
+		var course = courses[key];
+
+		//add course to saved-courses tab
+		var courseItem = $('#clone').clone();
+		courseItem.removeClass('hide');
+		courseItem.attr('id', course['id']);
+		$('#saved-courses-collection').append(courseItem);
+		courseItem.find('.saved-item span').html(course['title']);
+		courseItem.find('.saved-item-remove').on("click", savedItemRemove);
+	}
+}
+
+function addSchedules() {
+	var schedules = userData['schedules'];
+	for (let key of Object.keys(schedules)) {
+		var schedule = schedules[key];
+
+		//add schedule to saved-schedule tab
+		var scheduleItem = $('#clone').clone();
+		scheduleItem.removeClass('hide');
+		scheduleItem.attr('id', schedule['id']);
+		$('#saved-schedules-collection').append(scheduleItem);
+		scheduleItem.find('.saved-item span').html(schedule['name']);
+		scheduleItem.find('.saved-item-remove').on("click", savedItemRemove);
+	}
 }
