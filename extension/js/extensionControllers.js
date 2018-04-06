@@ -4,8 +4,10 @@ var serverUrl = "http://anthonyswebsite.com/CP476Final/";
 
 //Toggle accordian icons. Look for .svg since fa js inserts svg into i
 $('#action-accordion .collapsible-header').focusout(function () {
-	$(this).find('svg').removeClass('fa-caret-down');
-	$(this).find('svg').addClass('fa-caret-right');
+	if (!$(this).closest('li').hasClass('active')) {
+		$(this).find('svg').removeClass('fa-caret-down');
+		$(this).find('svg').addClass('fa-caret-right');
+	}
 });
 $('#action-accordion .collapsible-header').click(function () {
 	$(this).find('svg').toggleClass('fa-caret-down fa-caret-right');
@@ -104,18 +106,20 @@ $('#registration-submit').click(function () {
 				'outDuration': 1000,
 			});
 
-			logIn($('#login-email').val());
 			instance = M.Modal.getInstance(modal);
 			instance.open()
 			modal.blur();
 
 			setTimeout(function () {
 				instance.close();
+				//switch login tab to logout
+				logIn($('#login-email').val());
 			}, 2000);
-		} else if (data['result'] == false) {
-			alert("Your login is invalid!");
+		} else if (data['result'].includes('Duplicate')) {
+			alert("This email is already registed!");
 		} else {
 			console.log("Unexepected data from server");
+			console.log(data);
 		}
 	});
 });
@@ -182,7 +186,7 @@ $('#add-course-submit').click(function () {
 			return;
 		}
 
-		toSend['title'] = info.html();
+		toSend['title'] = info.get(0).innerText;
 		toSend['description'] = $(response).find('.ntdefault').get(0).outerHTML;
 
 		toSend['term'] = term;
@@ -196,7 +200,7 @@ $('#add-course-submit').click(function () {
 		post.done(function (data) {
 			data = JSON.parse(data);
 
-			if ('id' in data) {
+			if (data['description'] != null) {
 				var msg = $('#course-added-msg');
 				msg.removeClass('hide');
 				msg.hide();
@@ -257,16 +261,11 @@ $('#add-schedule-submit').click(function () {
 
 		toSend['login-email'] = userData['email'];
 
-		console.log("sending:");
-		console.log(toSend);
-
 		var post = $.post(serverUrl + "add-schedule-controller.php", toSend, function () {});
 		post.fail(function () {
 			console.log("Add schedule request to server failed");
 		});
 		post.done(function (response) {
-			console.log(response);
-
 			data = JSON.parse(response);
 
 			if ('id' in data) {
@@ -368,7 +367,10 @@ function savedItemRemove(event) {
 	//if schedule collection, remove schedule
 	if (collection.attr('id') == "saved-schedules-collection") {
 		delete userData['schedules'][itemId];
-		var post = $.post(serverUrl + "remove-schedule-controller.php", itemId, function () {});
+
+		var post = $.post(serverUrl + "remove-schedule-controller.php", {
+			'schedule-id': itemId
+		}, function () {});
 		post.fail(function () {
 			console.log('Remove schedule request to server failed');
 		});
@@ -376,7 +378,9 @@ function savedItemRemove(event) {
 	//else, course collection, remove course
 	else {
 		delete userData['courses'][itemId];
-		var post = $.post(serverUrl + "remove-course-controller.php", itemId, function () {});
+		var post = $.post(serverUrl + "remove-course-controller.php", {
+			'course-id': itemId
+		}, function () {});
 		post.fail(function () {
 			console.log('Remove course request to server failed');
 		});
@@ -534,9 +538,6 @@ $('#loris-login-submit').click(function () {
 									}), function (response) {
 										//wait for page to load
 										setTimeout(function () {
-											console.log('sending modify request');
-											console.log(JSON.stringify(crns));
-
 											//send msg to content script to input crns
 											chrome.tabs.sendMessage(tabs[0].id, JSON.stringify(crns), function (response) {
 												alert('CRNs added. You will have to click Submit yourself');
@@ -567,13 +568,13 @@ $('#loris-login-cancel').click(function () {
 });
 
 $('#help-icon-wrapper').click(function () {
-	alert('Help!');
+	chrome.tabs.update({
+		'url': "html/help.html"
+	}, function (tab) {});
 });
 
 function logIn(email) {
 	userData['email'] = email;
-
-	//switch login tab to logout
 	loggedInTransition();
 }
 
