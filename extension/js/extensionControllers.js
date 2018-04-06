@@ -525,8 +525,6 @@ $('#loris-login-submit').click(function () {
 						//else, open register for course page
 						//wait for page to load
 						setTimeout(function () {
-							console.log('redirecting to register page');
-
 							chrome.tabs.update({
 								'url': "https://loris.wlu.ca/ssb_prod/bwskfreg.P_AltPin"
 							}, function () {
