@@ -1,5 +1,4 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log(request);
 	var course = JSON.parse(request);
 
 	var title = course['title'];
@@ -12,7 +11,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	$('ul').append(item);
 
 	sendResponse({
-		data: course,
 		success: true
 	});
 });

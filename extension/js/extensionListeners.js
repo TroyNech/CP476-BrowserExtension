@@ -1,29 +1,53 @@
 var serverUrl = "http://anthonyswebsite.com/CP476Final/";
+var userData = {};
+
+//Initialize collapsible elements
+var elem = $('.collapsible');
+var instance = M.Collapsible.init(elem, null);
+
+//Initialize select elements
+var elem = $('select');
+var instance = M.FormSelect.init(elem, null);
+
+//read storage and setup extension
+chrome.storage.sync.get("laurier-link", function (result) {
+	if (jQuery.isEmptyObject(result)) {
+		return;
+	}
+
+	//else, logged in
+	userData = result['laurier-link'];
+
+	loggedIn();
+});
+
+//if on vsb, make add schedule tab a dropdown
+//and enable register tab
+chrome.tabs.query({
+	'active': true,
+	'currentWindow': true,
+	'url': 'https://scheduleme.wlu.ca/vsb/*'
+}, function (tabs) {
+	if (!($.isEmptyObject(tabs))) {
+		$('#add-schedule-tab').removeClass('collapse-disabled');
+		$('#register-courses-tab').removeClass('hide');
+	}
+});
 
 //listeners for extension.html
 
 //Toggle accordian icons. Look for .svg since fa js inserts svg into i
-$('#action-accordion .collapsible-header').focusout(function () {
-	$(this).find('svg').removeClass('fa-caret-down');
-	$(this).find('svg').addClass('fa-caret-right');
-});
 $('#action-accordion .collapsible-header').click(function () {
-	$(this).find('svg').toggleClass('fa-caret-down fa-caret-right');
-});
-
-//monitor whenever url changes while popup is open
-//make sure proper registration and add schedule tabs are properly set if not on VSB
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-	if (!tab.url.includes("https://scheduleme.wlu.ca/vsb")) {
-		$('#add-schedule-tab').addClass('collapse-disabled');
-		$('#register-courses-tab').addClass('hide');
-	}
-});
+	$(this).find('svg').toggleClass('fa-caret-right fa-caret-down');
+})
 
 //Handle click on forgot-password a
 $('#forgot-password').click(function (event) {
 	event.preventDefault();
-});
+})
+
+//disable form submittion
+$('form').submit(false);
 
 //on login submit
 //rely on browser to do front-end validation (back-end will do final validation)
@@ -175,14 +199,8 @@ $('#add-course-submit').click(function () {
 	var toSend = {};
 	var get = $.get(url);
 	get.done(function (response) {
-		var info = $(response).find('.nttitle');
-
-		if (info.length == 0) {
-			$('#add-course-code').addClass('invalid');
-			return;
-		}
-
-		toSend['title'] = info.html();
+		var info = $(response).find('.nttitle')
+		toSend['title'] = info.get(0).html();
 		toSend['description'] = $(response).find('.ntdefault').get(0).outerHTML;
 
 		toSend['term'] = term;
@@ -204,6 +222,7 @@ $('#add-course-submit').click(function () {
 					setTimeout(2000, function () {
 						msg.fadeOut(400, function () {
 							msg.addClass('hide');
+							//msg.hide();
 						});
 					});
 				});
@@ -218,9 +237,6 @@ $('#add-course-submit').click(function () {
 				courseItem.find('.saved-item span').html(course['title']);
 				courseItem.find('.saved-item-remove').on("click", savedItemRemove);
 				courseItem.find('.saved-item').on("click", savedCourseOpenDetail);
-
-				//remove any invalid class on code input
-				$('#add-course-code').removeClass('invalid');
 
 				//add to courses list and write back to storage
 				userData['courses'][course['id']] = course;
@@ -383,8 +399,6 @@ function savedItemRemove(event) {
 	}
 
 	//remove item from UI
-	//nowrap prevents item from expanding vertically as it slides off screen
-	item.find('span').css('white-space', 'nowrap');
 	item.css('margin-left', '26em');
 
 	setTimeout(function () {
@@ -430,7 +444,9 @@ function savedCourseOpenDetail(event) {
 				//need timeout to allow page to load
 				setTimeout(function () {
 					//send msg to content script to modify page
-					chrome.runtime.sendMessage(chrome.runtime.id, JSON.stringify(userData['courses'][courseId]), function (response) {});
+					chrome.runtime.sendMessage(chrome.runtime.id, JSON.stringify(userData['courses'][courseId]), function (response) {
+						console.log(response);
+					});
 				}, 1000);
 
 			});

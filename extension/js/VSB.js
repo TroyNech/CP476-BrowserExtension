@@ -1,12 +1,12 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log(request);
-	
-	var crn = document.getElementById("cartCrns").value;
-    crn = str.replace(/[()]/g,"");
-    crn = crn.split(" ");
+	var crns = document.getElementById("cartCrns").value;
 
-	sendResponse({
-		data: crn,
-		success: true
-	});
+    crns = crns.replace(/[()]/g,"");
+	crns = crns.split(" ");
+
+	var toSend = {};
+	toSend['data'] = crns;
+	toSend['success'] = true;
+
+	sendResponse(toSend);
 });

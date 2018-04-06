@@ -1,0 +1,17 @@
+h3 {
+	background-color: #E3E5EE;
+	padding-bottom: 10px;
+}
+
+ul {
+	padding-left: 10px;
+}
+
+li {
+	list-style-type: none;
+	margin-bottom: 10px;
+}
+
+.fieldlabeltext {
+	font-weight: bold;
+}

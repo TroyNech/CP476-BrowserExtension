@@ -3,234 +3,9 @@
 
 <head>
     <base href="../">
-
-    <!--Should use minified in production-->
-    <!--Import Font Awesome Icons-->
-    <script src="js/fa-regular.js"></script>
-    <script src="js/fa-solid.js"></script>
-    <script src="js/fontawesome.js"></script>
-    <!--
-    <script src="js/fa-regular.min.js"></script>
-    <script src="js/fa-solid.min.js"></script>
-    <script src="js/fontawesome.min.js"></script>
-    -->
-    <!--Import materialize.css-->
-    <link rel="stylesheet" href="css/materialize.css" media="screen,projection" />
-    <!--
+  
     <link rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
-    -->
-    <link rel="import" href="html/templates.html">
-
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <style>
-        ::-webkit-scrollbar {
-            width: 0px;
-            /* remove scrollbar space */
-            background: transparent;
-            /* optional: just make scrollbar invisible */
-        }
-
-        html {
-            overflow: scroll;
-            overflow-x: hidden;
-        }
-
-        body {
-            font-size: 12px;
-            width: 25em;
-        }
-
-        .collapsible-header:focus,
-        .modal:focus {
-            outline: none !important;
-        }
-
-        .btn {
-            text-transform: initial;
-        }
-
-        #action-accordion {
-            margin: 0;
-        }
-
-        /*prevent icon div from forcing text to wrap*/
-
-        .collapsible-header {
-            white-space: nowrap;
-        }
-
-        .collapsible-header:hover {
-            background-color: #ddd;
-        }
-
-        .collapsible .active .collapsible-header {
-            background-color: #ddd;
-        }
-
-        .collapsible .disabled .collapsible-header {
-            background-color: #eeeeee;
-        }
-
-        .disabled .collapsible-body,
-        .collapse-disabled .collapsible-body {
-            display: none !important;
-        }
-
-        .disabled .tab-icon-wrapper,
-        .collapse-disabled .tab-icon-wrapper {
-            display: none !important;
-        }
-
-        .disabled .collapsible-header:hover {
-            background-color: #eeeeee;
-            cursor: default;
-        }
-
-        .tab-icon-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        #help-icon-wrapper {
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tab-icon {
-            position: absolute;
-            right: 10px;
-        }
-
-        .no-link-colour {
-            color: unset;
-        }
-
-        .fa-question-circle {
-            color: #1976d2;
-            margin-left: 10px;
-        }
-
-        #registration-submit {
-            margin-left: 30px;
-        }
-
-        .success-msg {
-            border: 1px solid #7dbf4a;
-            background: #dbffc9;
-            color: #7dbf4a;
-        }
-
-        .error-msg {
-            border: 1px solid #ad4641;
-            background: #f49c97;
-            color: #ad4641;
-        }
-
-        .success-msg,
-        .error-msg {
-            width: 100%;
-            margin: 0px;
-            padding: 10px;
-            padding-left: 20px;
-            text-align: left;
-        }
-
-        #add-course-form div:first-of-type {
-            margin-bottom: 2.5rem;
-        }
-
-        .saved-item-tab .collapsible-body {
-            padding: 0 0 2rem;
-        }
-
-        .saved-item-tab .collection .collection-item {
-            display: flex;
-            -webkit-transition: .25s;
-            transition: .25s;
-            color: #26a69a;
-            transition: margin-left .5s;
-        }
-
-        .saved-item-tab .collection .collection-item:hover {
-            background-color: #ddd;
-        }
-
-        .saved-item {
-            flex-grow: 1;
-            margin: -10px 0;
-        }
-
-        .saved-item-remove {
-            align-self: flex-end;
-            padding-left: 5px;
-        }
-
-        .saved-item-card {
-            margin: 0 0 1rem;
-            padding: 0;
-        }
-
-        #open-courses,
-        #remove-courses,
-        #remove-schedules {
-            display: block;
-            margin: auto;
-            margin-bottom: 10px;
-        }
-
-        #open-courses,
-        #remove-courses,
-        #remove-schedules {
-            margin-top: 2rem;
-        }
-
-        .negative-btn {
-            background-color: #ef5350;
-        }
-
-        .modal-btn-1 {
-            margin-left: 20px;
-        }
-
-        .modal-btn-2 {
-            float: right;
-            margin-right: 20px;
-        }
-
-        #login-success-check {
-            color: green;
-        }
-
-        .modal {
-            background: transparent;
-            border: 0;
-            box-shadow: none !important;
-            -webkit-box-shadow: none !important;
-            width: 100%;
-            height: 100%;
-        }
-
-        .select-wrapper input.select-dropdown {
-            font-size: 1em;
-        }
-
-        input,
-        label,
-        button,
-        a {
-            font-size: 1em !important;
-        }
-
-        #help-icon {
-            margin: 15px 0 10px 10px;
-        }
-
-        .saved-item-remove {
-            cursor:pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="css/extension.css" media="screen,projection" />
 </head>
 
 <body>
@@ -271,7 +46,7 @@
                     </div>
                 </form>
 
-                <div id="login-success-modal" class="modal">
+                <div id="login-success-modal" class="modal icon-modal">
                     <div class="modal-content" style="display:flex;justify-content:center;">
                         <span class="fa-layers fw" style="position:inherit">
                             <i class="fas fa-circle fa-10x" style="color:white"></i>
@@ -418,77 +193,57 @@
                     <span>Register in Courses</span>
                 </div>
             </a>
-
-            <div id="loris-login-modal" class="modal">
-                <div class="modal-content">
-                    <!--Decide later which invalid login is better-->
-                    <p class="invalid hide" style="color:red">Invalid login</p>
-                    <div class="error-msg hide">Invalid login</div>
-                    <h4>Enter Login Information</h4>
-                    <p>
-                        Please enter your LORIS login information. Laurier-Links needs this information to open the registration page on LORIS. Your
-                        information will not be stored.
-                    </p>
-                    <form id="loris-login-form">
-                        <div class="input-field">
-                            <i class="fas fa-id-badge fa-xs prefix"></i>
-                            <label for="loris-id">User ID</label>
-                            <input id="loris-id" name="loris-id" class="validate" required>
-                        </div>
-                        <div class="input-field">
-                            <i class="fas fa-lock fa-xs prefix"></i>
-                            <label for="loris-pin">Pin</label>
-                            <input id="loris-pin" name="loris-pin" class="validate" type="password" required>
-                        </div>
-
-                        <div class="input-field">
-                            <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
-                            <button class="btn negative-btn modal-btn-2 modal-close" id="loris-login-cancel" type="button">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </li>
-        <!--
-        <li id="animal-tab">
-            <div class="collapsible-header">
-                <span>OOP</span>
-                <div class="tab-icon-wrapper">
-                    <i class="fas fa-caret-right fa-lg tab-icon"></i>
-                </div>
-            </div>
-            <div class="collapsible-body">
-                <div class="card-panel">
-                    <span>Animal</span>
-                </div>
-                <div class="card-panel">
-                    <span>Animal</span>
-                </div>
-        </li>
-    -->
     </ul>
     <div id="help-icon-wrapper">
         <i id="help-icon" class="fas fa-question-circle fa-2x"></i>
     </div>
 
-        <li id="clone" class="collection-item hide">
-            <a class="saved-item valign-wrapper">
-                <span>Alvin</span>
-            </a>
-            <a class="saved-item-remove">
-                <i class="fas fa-times-circle" style="color:red"></i>
-            </a>
-        </li>
+    <li id="clone" class="collection-item hide">
+        <a class="saved-item valign-wrapper">
+            <span>Alvin</span>
+        </a>
+        <a class="saved-item-remove">
+            <i class="fas fa-times-circle" style="color:red"></i>
+        </a>
+    </li>
 
+    <div id="loris-login-modal" class="modal">
+        <div class="modal-content">
+            <!--Decide later which invalid login is better-->
+            <p class="invalid hide" style="color:red">Invalid login</p>
+            <div class="error-msg hide">Invalid login</div>
+            <h4>Enter Login Information</h4>
+            <p>
+                Please enter your LORIS login information. Laurier-Links needs this information to open the registration page on LORIS. Your
+                information will not be stored.
+            </p>
+            <form id="loris-login-form">
+                <div class="input-field" id="loris-id-input-field">
+                    <i class="fas fa-id-badge fa-xs prefix"></i>
+                    <label for="loris-id">User ID</label>
+                    <input id="loris-id" name="loris-id" class="validate" type="text" required>
+                </div>
+                <div class="input-field">
+                    <i class="fas fa-lock fa-xs prefix"></i>
+                    <label for="loris-pin">Pin</label>
+                    <input id="loris-pin" name="loris-pin" class="validate" type="password" required>
+                </div>
 
-    <!--JavaScript at end of body for optimized loading-->
-    <!--Use local unminified for testing-->
-    <!--
+                <div class="input-field">
+                    <button class="btn modal-btn-1" id="loris-login-submit" type="submit">Login</button>
+                    <button class="btn negative-btn modal-btn-2" id="loris-login-cancel" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/fa-regular.min.js"></script>
+    <script src="js/fa-solid.min.js"></script>
+    <script src="js/fontawesome.min.js"></script>
     <script src="js/materialize.min.js"></script> 
     <script src="js/jquery-3.3.1.min.js"></script> 
-    -->
-    <script src="js/materialize.js"></script>
-    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/extensionStartup.js"></script>
     <script src="js/extensionControllers.js"></script>
 </body>
 

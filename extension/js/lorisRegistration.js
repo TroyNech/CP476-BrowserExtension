@@ -1,13 +1,17 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log(request);
+	request  = JSON.parse(request);
 
-	var crns = JSON.parse(request);
+	//if request to input crns
+	if ("crns" in request) {
+		var crns = request['crns'];
 
-	var termSelect = document.getElementById("term_id");
-
-	//if need to select term
-	if (termSelect != null) {
-		//get submit button to click
+		for (var i = 0; i < crns.length; i++) {
+			document.getElementById('crn_id' + (i + 1)).value = crns[i];
+		}
+	}
+	//else, request to select term
+	else {
+		//get submit button to click to submit term selection
 		var inputs = document.getElementsByTagName('input');
 
 		for (var i = 0; i < inputs.length; i++) {
@@ -15,15 +19,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 				inputs[i].click();
 			}
 		}
-
-		//timeout to let page load
-		setTimeout(function () {}, 2000);
 	}
 
-	for (var i = 0; i < crns.length - 1; i++) {
-		document.getElementById('crn_id' + (i + 1)).value = crns[i];
-	}
-	
 	sendResponse({
 		success: true
 	});
